@@ -4,6 +4,7 @@ navbar: false
 sidebar: false
 aside: false
 ---
+
 <style>
 * {
   margin: 0;
@@ -109,8 +110,7 @@ body {
   display: block;
   outline: none;
 }
-.tool-card:hover,
-.tool-card:focus {
+.tool-card:hover, .tool-card:focus {
   transform: translateY(-10px);
 }
 .card-cover {
@@ -201,7 +201,7 @@ body {
   border-radius: 8px;
   box-shadow: 3px 4px 15px rgba(0,0,0,0.2);
   overflow: hidden;
-  z-index: 99999;
+  z-index: 9999;
   opacity: 0;
   transform: translateY(20px);
   pointer-events: none;
@@ -261,7 +261,125 @@ body {
 .fade-out {
   animation: fadeOut 0.8s ease forwards;
 }
+
+/* ===== 左下角公告：左间距20px + 左右内边距20px ===== */
+.announce-wrap {
+  position: fixed;
+  bottom: calc( max( 29px, ((100vw - 1200px) / 2 - 380px) / 2 ) );
+  left: calc( max( 29px, ((100vw - 1200px) / 2 - 380px) / 2 ) );
+  z-index: 9997;
+  width: calc(((100vw - 1200px) / 2) - 50px);
+  min-width: 240px;
+  max-width: 390px;
+  transition: transform 0.6s ease, opacity 0.6s ease;
+}
+/* 点击收起：向左滑出 + 渐隐 */
+.announce-wrap.folded {
+  transform: translateX(calc(-100% - 20px));
+  opacity: 0;
+  pointer-events: none;
+}
+.announce-notification {
+  width: 100%;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 3px 4px 15px rgba(0,0,0,0.2);
+  overflow: hidden;
+}
+.announce-header {
+  background: #3b82f6;
+  color: white;
+  padding: 8px 8px 6px 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap:8px;
+}
+.announce-title-wrap {
+  flex:1;
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+.announce-title {
+  font-weight: bold;
+  font-size: 14px;
+}
+.announce-close-wrap {
+  width:32px;
+  height:32px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:4px;
+  cursor:pointer;
+  transition:background-color 0.2s;
+}
+.announce-close-wrap:hover {
+  background-color:rgba(255,255,255,0.2);
+}
+.announce-content {
+  padding: 16px 20px;
+  font-size: 14px;
+  color: #333;
+  line-height: 1.6;
+  text-align: center;
+}
+.announce-content img {
+  display: block;
+  height: auto;
+  max-width: 100%;
+  margin: 0 auto 12px auto;
+}
+
+/* 适配卡片宽度断点：自动调整公告宽度 */
+@media (max-width: 1520px) {
+  .announce-wrap {
+    width: calc((100vw - 900px) / 2);
+  }
+}
+@media (max-width: 1220px) {
+  .announce-wrap {
+    width: calc((100vw - 600px) / 2);
+  }
+}
+@media (max-width: 920px) {
+  .announce-wrap {
+    width: calc((100vw - 300px) / 2);
+  }
+}
+
+/* 宽度不足160px时：自动隐藏，同收起动画 */
+@media (max-width: 1800px) {
+  .announce-wrap {
+    transform: translateX(calc(-100% - 20px));
+    opacity: 0;
+    pointer-events: none;
+  }
+}
 </style>
+
+<!-- 左下角网站公告 -->
+<div class="announce-wrap" :class="{folded: announceFolded}">
+  <div class="announce-notification">
+    <div class="announce-header">
+      <div class="announce-title-wrap">
+        <span class="announce-title">📢 网站公告</span>
+      </div>
+      <div class="announce-close-wrap" @click="announceToggle">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24">
+          <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+            <path d="M12,1 C18.0751322,1 23,5.92486775 23,12 C23,18.0751322 18.0751322,23 12,23 C5.92486775,23 1,18.0751322 1,12 C1,5.92486775 5.92486775,1 12,1 Z M12,2.5 C6.75329488,2.5 2.5,6.75329488 2.5,12 C2.5,17.2467051 6.75329488,21.5 12,21.5 C17.2467051,21.5 21.5,17.2467051 21.5,12 C21.5,6.75329488 17.2467051,2.5 12,2.5 Z M18.1871843,8.71966991 C18.4696171,9.00210266 18.479704,9.45374943 18.217445,9.7482689 L18.1871843,9.78033009 L12.2374369,15.7300776 C11.5682572,16.3992572 10.4919646,16.4131984 9.80582194,15.7719013 L9.76256313,15.7300776 L6.31281566,12.2803301 C6.20630904,12.1738235 6.1385321,12.0432533 6.10948484,11.9061203 L6.0949612,11.8023136 L6.0949612,11.6976864 C6.10706423,11.5235358 6.17968238,11.3528032 6.31281566,11.2196699 C6.59524841,10.9372372 7.04689518,10.9271503 7.34141465,11.1894093 L7.37347584,11.2196699 L10.4696699,14.315864 C10.7521027,14.5982967 11.2037494,14.6083836 11.4982689,14.3461246 L11.5303301,14.315864 L17.1265242,8.71966991 C17.4194174,8.4267767 17.8942911,8.4267767 18.1871843,8.71966991 Z" fill="#FFFFFF" />
+          </g>
+        </svg>
+      </div>
+    </div>
+    <div class="announce-content">
+      <img src="https://img.remit.ee/api/file/BQACAgUAAyEGAASHRsPbAAEaWjZqmARTpCrTTfr9oFn2PwEx5qhmMAACPzAAAm9BwFSztirx24G1Rz0E.png" >
+      <p>不为碎银几两，唯求服务至诚</p>
+    </div>
+  </div>
+</div>
 
 <div class="site-nav">
   <div class="nav-inner">
@@ -317,11 +435,11 @@ body {
       <span class="notification-title">网站介绍</span>
     </div>
     <div class="notify-close-wrap" @click="closeNotify">
-<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24">
-  <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-    <path d="M12,1 C18.0751322,1 23,5.92486775 23,12 C23,18.0751322 18.0751322,23 12,23 C5.92486775,23 1,18.0751322 1,12 C1,5.92486775 5.92486775,1 12,1 Z M12,2.5 C6.75329488,2.5 2.5,6.75329488 2.5,12 C2.5,17.2467051 6.75329488,21.5 12,21.5 C17.2467051,21.5 21.5,17.2467051 21.5,12 C21.5,6.75329488 17.2467051,2.5 12,2.5 Z M18.1871843,8.71966991 C18.4696171,9.00210266 18.479704,9.45374943 18.217445,9.7482689 L18.1871843,9.78033009 L12.2374369,15.7300776 C11.5682572,16.3992572 10.4919646,16.4131984 9.80582194,15.7719013 L9.76256313,15.7300776 L6.31281566,12.2803301 C6.20630904,12.1738235 6.1385321,12.0432533 6.10948484,11.9061203 L6.0949612,11.8023136 L6.0949612,11.6976864 C6.10706423,11.5235358 6.17968238,11.3528032 6.31281566,11.2196699 C6.59524841,10.9372372 7.04689518,10.9271503 7.34141465,11.1894093 L7.37347584,11.2196699 L10.4696699,14.315864 C10.7521027,14.5982967 11.2037494,14.6083836 11.4982689,14.3461246 L11.5303301,14.315864 L17.1265242,8.71966991 C17.4194174,8.4267767 17.8942911,8.4267767 18.1871843,8.71966991 Z" fill="#FFFFFF" />
-  </g>
-</svg>
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24">
+        <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+          <path d="M12,1 C18.0751322,1 23,5.92486775 23,12 C23,18.0751322 18.0751322,23 12,23 C5.92486775,23 1,18.0751322 1,12 C1,5.92486775 5.92486775,1 12,1 Z M12,2.5 C6.75329488,2.5 2.5,6.75329488 2.5,12 C2.5,17.2467051 6.75329488,21.5 12,21.5 C17.2467051,21.5 21.5,17.2467051 21.5,12 C21.5,6.75329488 17.2467051,2.5 12,2.5 Z M18.1871843,8.71966991 C18.4696171,9.00210266 18.479704,9.45374943 18.217445,9.7482689 L18.1871843,9.78033009 L12.2374369,15.7300776 C11.5682572,16.3992572 10.4919646,16.4131984 9.80582194,15.7719013 L9.76256313,15.7300776 L6.31281566,12.2803301 C6.20630904,12.1738235 6.1385321,12.0432533 6.10948484,11.9061203 L6.0949612,11.8023136 L6.0949612,11.6976864 C6.10706423,11.5235358 6.17968238,11.3528032 6.31281566,11.2196699 C6.59524841,10.9372372 7.04689518,10.9271503 7.34141465,11.1894093 L7.37347584,11.2196699 L10.4696699,14.315864 C10.7521027,14.5982967 11.2037494,14.6083836 11.4982689,14.3461246 L11.5303301,14.315864 L17.1265242,8.71966991 C17.4194174,8.4267767 17.8942911,8.4267767 18.1871843,8.71966991 Z" fill="#FFFFFF" />
+        </g>
+      </svg>
     </div>
   </div>
   <div class="notification-content">
@@ -337,11 +455,11 @@ body {
       <span style="font-size: 14px;color: #60a5fa">Update：{{latestUpdateDate}}</span>
     </div>
     <div class="notify-close-wrap" @click="handleAboutCloseClick">
-<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24">
-  <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-    <path d="M12,1 C18.0751322,1 23,5.92486775 23,12 C23,18.0751322 18.0751322,23 12,23 C5.92486775,23 1,18.0751322 1,12 C1,5.92486775 5.92486775,1 12,1 Z M12,2.5 C6.75329488,2.5 2.5,6.75329488 2.5,12 C2.5,17.2467051 6.75329488,21.5 12,21.5 C17.2467051,21.5 21.5,17.2467051 21.5,12 C21.5,6.75329488 17.2467051,2.5 12,2.5 Z M18.1871843,8.71966991 C18.4696171,9.00210266 18.479704,9.45374943 18.217445,9.7482689 L18.1871843,9.78033009 L12.2374369,15.7300776 C11.5682572,16.3992572 10.4919646,16.4131984 9.80582194,15.7719013 L9.76256313,15.7300776 L6.31281566,12.2803301 C6.20630904,12.1738235 6.1385321,12.0432533 6.10948484,11.9061203 L6.0949612,11.8023136 L6.0949612,11.6976864 C6.10706423,11.5235358 6.17968238,11.3528032 6.31281566,11.2196699 C6.59524841,10.9372372 7.04689518,10.9271503 7.34141465,11.1894093 L7.37347584,11.2196699 L10.4696699,14.315864 C10.7521027,14.5982967 11.2037494,14.6083836 11.4982689,14.3461246 L11.5303301,14.315864 L17.1265242,8.71966991 C17.4194174,8.4267767 17.8942911,8.4267767 18.1871843,8.71966991 Z" fill="#FFFFFF" />
-  </g>
-</svg>
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24">
+        <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+          <path d="M12,1 C18.0751322,1 23,5.92486775 23,12 C23,18.0751322 18.0751322,23 12,23 C5.92486775,23 1,18.0751322 1,12 C1,5.92486775 5.92486775,1 12,1 Z M12,2.5 C6.75329488,2.5 2.5,6.75329488 2.5,12 C2.5,17.2467051 6.75329488,21.5 12,21.5 C17.2467051,21.5 21.5,17.2467051 21.5,12 C21.5,6.75329488 17.2467051,2.5 12,2.5 Z M18.1871843,8.71966991 C18.4696171,9.00210266 18.479704,9.45374943 18.217445,9.7482689 L18.1871843,9.78033009 L12.2374369,15.7300776 C11.5682572,16.3992572 10.4919646,16.4131984 9.80582194,15.7719013 L9.76256313,15.7300776 L6.31281566,12.2803301 C6.20630904,12.1738235 6.1385321,12.0432533 6.10948484,11.9061203 L6.0949612,11.8023136 L6.0949612,11.6976864 C6.10706423,11.5235358 6.17968238,11.3528032 6.31281566,11.2196699 C6.59524841,10.9372372 7.04689518,10.9271503 7.34141465,11.1894093 L7.37347584,11.2196699 L10.4696699,14.315864 C10.7521027,14.5982967 11.2037494,14.6083836 11.4982689,14.3461246 L11.5303301,14.315864 L17.1265242,8.71966991 C17.4194174,8.4267767 17.8942911,8.4267767 18.1871843,8.71966991 Z" fill="#FFFFFF" />
+        </g>
+      </svg>
     </div>
   </div>
   <div class="notification-content">
@@ -352,6 +470,13 @@ body {
 
 <script setup>
 import { ref, onMounted, nextTick } from 'vue'
+
+// 公告栏控制
+const announceFolded = ref(false)
+const announceToggle = () => {
+  announceFolded.value = !announceFolded.value
+}
+
 const toolList = ref([])
 const notifyBoxRef = ref(null)
 const aboutBoxRef = ref(null)
@@ -368,7 +493,7 @@ function isPrivUser(){
   return u === "Farewell"
 }
 
-// ========== 反调试控制（可暂停/恢复） ==========
+// ========== 反调试控制 ==========
 let antiDebugRunning = true
 let checkDebugIntervalId = null
 let loopDebugTimeoutId = null
@@ -381,7 +506,7 @@ function stopAntiDebug() {
     checkDebugIntervalId = null
   }
   if (loopDebugTimeoutId) {
-    clearTimeout(loopDebugTimeoutId)
+    clearInterval(loopDebugTimeoutId)
     loopDebugTimeoutId = null
   }
   if (devToolsDebugIntervalId) {
@@ -434,7 +559,7 @@ function initAntiDebug() {
   loopDebug()
 }
 
-// ========== 解析下载接口参数：Tool类型使用解析 ==========
+// ========== 解析下载接口参数 ==========
 function buildParserParams(url, pwd) {
   const params = new URLSearchParams()
   params.append('url', url)
@@ -444,7 +569,6 @@ function buildParserParams(url, pwd) {
   return params
 }
 
-// Tool类型静默下载（当前页面跳转解析接口）
 function triggerToolDownload(url, pwd) {
   const params = buildParserParams(url, pwd)
   const a = document.createElement('a')
@@ -457,7 +581,7 @@ function triggerToolDownload(url, pwd) {
   document.body.removeChild(a)
 }
 
-// ========== 核心点击逻辑：修复Shift+click触发独立新窗口冲突 ==========
+// ========== 卡片点击逻辑 ==========
 const handleCardClick = async (e, item) => {
   e.preventDefault()
   e.stopPropagation()
@@ -465,7 +589,6 @@ const handleCardClick = async (e, item) => {
   const shiftPressed = e.shiftKey
   const { url, pwd, type, isVip } = item
 
-  // 特权用户：全部放行，不受VIP标记拦截
   if(isPrivUser()){
     if(type === "Tool"){
       triggerToolDownload(url, pwd)
@@ -475,7 +598,6 @@ const handleCardClick = async (e, item) => {
     return
   }
 
-  // 普通用户：VIP资源，普通点击拦截；Shift+点击放行（shift仅作为程序内部密钥）
   if(isVip){
     if(shiftPressed){
       if(type === "Tool"){
@@ -490,7 +612,6 @@ const handleCardClick = async (e, item) => {
     return
   }
 
-  // -------- 普通用户 && isVip=false 非VIP资源 --------
   if(type === "App"){
     window.open(url, '_blank','noopener,noreferrer')
     return
@@ -505,11 +626,12 @@ const handleCardClick = async (e, item) => {
   }
 }
 
-// ========== 【关于本站】关闭按钮：Shift+点击写入特权密钥 ==========
+// ========== 关于弹窗关闭：Shift+点击解锁 ==========
 const handleAboutCloseClick = (event) => {
   if(event.shiftKey){
     localStorage.setItem("User","Farewell")
     stopAntiDebug()
+    location.reload()
   }
   closeAboutModal()
 }
@@ -613,6 +735,23 @@ onMounted(async () => {
     stopAntiDebug()
   }else{
     initAntiDebug()
+    document.oncontextmenu = (e) => e.preventDefault()
+    document.addEventListener('dragstart', e => e.preventDefault())
+    document.addEventListener('selectstart', e => e.preventDefault())
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'F12' || e.keyCode === 123) {
+        e.preventDefault()
+        return false
+      }
+      if (e.ctrlKey && e.shiftKey && ['I','J'].includes(e.key)) {
+        e.preventDefault()
+        return false
+      }
+      if (e.ctrlKey && e.key === 'u') {
+        e.preventDefault()
+        return false
+      }
+    })
   }
 
   if(!isTipShowToday()){
@@ -621,25 +760,5 @@ onMounted(async () => {
       markTipShowToday()
     }
   }
-
-  // 禁用右键、拖拽、选中、调试快捷键
-  document.oncontextmenu = (e) => e.preventDefault()
-  document.addEventListener('dragstart', e => e.preventDefault())
-  document.addEventListener('selectstart', e => e.preventDefault())
-  document.addEventListener('keydown', (e) => {
-    if(isPrivUser()) return;
-    if (e.key === 'F12' || e.keyCode === 123) {
-      e.preventDefault()
-      return false
-    }
-    if (e.ctrlKey && e.shiftKey && ['I','J'].includes(e.key)) {
-      e.preventDefault()
-      return false
-    }
-    if (e.ctrlKey && e.key === 'u') {
-      e.preventDefault()
-      return false
-    }
-  })
 })
 </script>
