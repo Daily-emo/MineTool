@@ -4,7 +4,6 @@ navbar: false
 sidebar: false
 aside: false
 ---
-
 <style>
 * {
   margin: 0;
@@ -262,7 +261,7 @@ body {
   animation: fadeOut 0.8s ease forwards;
 }
 
-/* ===== 左下角公告：左间距20px + 左右内边距20px ===== */
+/* ===== 左下角公告：大屏专属显示，移除冲突的max‑width:1800媒体查询 ===== */
 .announce-wrap {
   position: fixed;
   bottom: calc( max( 29px, ((100vw - 1200px) / 2 - 380px) / 2 ) );
@@ -271,9 +270,9 @@ body {
   width: calc(((100vw - 1200px) / 2) - 50px);
   min-width: 240px;
   max-width: 390px;
-  transition: transform 0.6s ease, opacity 0.6s ease;
+  transition: transform 1s ease, opacity 1.4s ease;
 }
-/* 点击收起：向左滑出 + 渐隐 */
+/* folded：仅做动画隐藏，业务大屏小屏判断交给JS */
 .announce-wrap.folded {
   transform: translateX(calc(-100% - 20px));
   opacity: 0;
@@ -313,7 +312,7 @@ body {
   justify-content:center;
   border-radius:4px;
   cursor:pointer;
-  transition:background-color 0.2s;
+  transition:background-color 0.6s;
 }
 .announce-close-wrap:hover {
   background-color:rgba(255,255,255,0.2);
@@ -346,15 +345,6 @@ body {
 @media (max-width: 920px) {
   .announce-wrap {
     width: calc((100vw - 300px) / 2);
-  }
-}
-
-/* 宽度不足160px时：自动隐藏，同收起动画 */
-@media (max-width: 1800px) {
-  .announce-wrap {
-    transform: translateX(calc(-100% - 20px));
-    opacity: 0;
-    pointer-events: none;
   }
 }
 </style>
@@ -471,10 +461,14 @@ body {
 <script setup>
 import { ref, onMounted, nextTick } from 'vue'
 
-// 公告栏控制
-const announceFolded = ref(false)
+// 公告栏控制：初始折叠隐藏在屏幕外
+const announceFolded = ref(true)
+// 用户手动关闭标记，关闭后即使大屏resize也不再自动弹出
+let userClosedAnnounce = false
+
 const announceToggle = () => {
-  announceFolded.value = !announceFolded.value
+  announceFolded.value = true
+  userClosedAnnounce = true
 }
 
 const toolList = ref([])
@@ -727,6 +721,21 @@ const loadToolData = async () => {
   }
 }
 
+// 判断大屏 >=1800
+function isBigScreen(){
+  return window.innerWidth >= 1800
+}
+
+// resize更新公告状态，用户手动关闭后不再自动弹出
+function updateAnnounceState(){
+  if(userClosedAnnounce) return
+  if(isBigScreen()){
+    announceFolded.value = false
+  }else{
+    announceFolded.value = true
+  }
+}
+
 onMounted(async () => {
   await loadToolData()
   await nextTick()
@@ -760,5 +769,13 @@ onMounted(async () => {
       markTipShowToday()
     }
   }
+
+  // 页面挂载完成，等待2秒执行大屏判断，>=1800大屏才滑入公告
+  setTimeout(()=>{
+    updateAnnounceState()
+  }, 2000)
+
+  // 监听窗口缩放
+  window.addEventListener('resize', updateAnnounceState)
 })
 </script>
