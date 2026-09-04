@@ -85,13 +85,14 @@ body {
   height: auto;
 }
 @media (max-width: 1220px) {
-  .card-container, .nav-inner { width: 900px; }
+  .card-container { width: 900px; }
+  .nav-inner { width: 85vw; }
 }
 @media (max-width: 920px) {
-  .card-container, .nav-inner { width: 600px; }
+  .card-container { width: 600px; }
 }
 @media (max-width: 620px) {
-  .card-container, .nav-inner { width: 300px; }
+  .card-container { width: 300px; }
 }
 .tool-card {
   width: 280px;
