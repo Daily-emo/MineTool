@@ -49,8 +49,10 @@ body {
 .site-nav {
   width: 100%;
   height: 50px;
-  background: #fff;
+  background-color: rgba(255, 255, 255, 0.5);
   box-shadow: 2px 4px 4px rgba(0,0,0,0.07);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   position: fixed;
   top: 0;
   left: 0;
