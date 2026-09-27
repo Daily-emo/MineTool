@@ -118,9 +118,11 @@ body {
   height: 320px;
   float: left;
   margin: 0 10px 30px 10px;
-  background: #fff;
+  background-color: rgba(255, 255, 255, 0.32);
+  box-shadow: 2px 4px 4px rgba(0,0,0,0.1);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(4px);
   border-radius: 23px;
-  box-shadow: 0 1px 10px 1px rgba(0, 0, 0, 0.10);
   overflow: hidden;
   transition: transform 0.3s ease;
   cursor: pointer;
@@ -135,7 +137,6 @@ body {
 .card-cover {
   width: 100%;
   height: 166px;
-  background: #f0f2f5;
 }
 .card-cover img {
   width: 100%;
