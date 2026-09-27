@@ -17,8 +17,25 @@ html {
   text-size-adjust: 100%;
 }
 body {
-  background-color: #f3f4f8;
+  background-color: transparent;
   height: auto;
+}
+/* ========== 新增：全屏背景+白色半透明遮罩 ========== */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-image: url("https://shiratamaco.com/assets/images/portfolio/kv_profile.avif");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  /* 50%白色遮罩 */
+  background-color: rgba(255, 255, 255, 0.5);
+  background-blend-mode: normal;
+  z-index: -1;
 }
 img {
   user-drag: none;
@@ -261,7 +278,6 @@ body {
 .fade-out {
   animation: fadeOut 0.8s ease forwards;
 }
-
 /* ===== 左下角公告：大屏专属显示，移除冲突的max‑width:1800媒体查询 ===== */
 .announce-wrap {
   position: fixed;
@@ -331,7 +347,6 @@ body {
   max-width: 100%;
   margin: 0 auto 12px auto;
 }
-
 /* 适配卡片宽度断点：自动调整公告宽度 */
 @media (max-width: 1520px) {
   .announce-wrap {
@@ -429,35 +444,35 @@ body {
       <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24">
         <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
           <path d="M12,1 C18.0751322,1 23,5.92486775 23,12 C23,18.0751322 18.0751322,23 12,23 C5.92486775,23 1,18.0751322 1,12 C1,5.92486775 5.92486775,1 12,1 Z M12,2.5 C6.75329488,2.5 2.5,6.75329488 2.5,12 C2.5,17.2467051 6.75329488,21.5 12,21.5 C17.2467051,21.5 21.5,17.2467051 21.5,12 C21.5,6.75329488 17.2467051,2.5 12,2.5 Z M18.1871843,8.71966991 C18.4696171,9.00210266 18.479704,9.45374943 18.217445,9.7482689 L18.1871843,9.78033009 L12.2374369,15.7300776 C11.5682572,16.3992572 10.4919646,16.4131984 9.80582194,15.7719013 L9.76256313,15.7300776 L6.31281566,12.2803301 C6.20630904,12.1738235 6.1385321,12.0432533 6.10948484,11.9061203 L6.0949612,11.8023136 L6.0949612,11.6976864 C6.10706423,11.5235358 6.17968238,11.3528032 6.31281566,11.2196699 C6.59524841,10.9372372 7.04689518,10.9271503 7.34141465,11.1894093 L7.37347584,11.2196699 L10.4696699,14.315864 C10.7521027,14.5982967 11.2037494,14.6083836 11.4982689,14.3461246 L11.5303301,14.315864 L17.1265242,8.71966991 C17.4194174,8.4267767 17.8942911,8.4267767 18.1871843,8.71966991 Z" fill="#FFFFFF" />
-        </g>
-      </svg>
+          </g>
+        </svg>
+      </div>
+    </div>
+    <div class="notification-content">
+      <p>本站访客部分资源需向<b>管理员</b>获取下载权限</p>
+      <p style="margin-top:6px;color:#888;">© Farewell All Rights Reserved. 2026</p>
     </div>
   </div>
-  <div class="notification-content">
-    <p>本站访客部分资源需向<b>管理员</b>获取下载权限</p>
-    <p style="margin-top:6px;color:#888;">© Farewell All Rights Reserved. 2026</p>
-  </div>
-</div>
 
-<div ref="aboutBoxRef" class="notification">
-  <div class="notification-header">
-    <div class="notification-title-wrap">
-      <span class="notification-title">关于本站</span>
-      <span style="font-size: 14px;color: #60a5fa">Update：{{latestUpdateDate}}</span>
+  <div ref="aboutBoxRef" class="notification">
+    <div class="notification-header">
+      <div class="notification-title-wrap">
+        <span class="notification-title">关于本站</span>
+        <span style="font-size: 14px;color: #60a5fa">Update：{{latestUpdateDate}}</span>
+      </div>
+      <div class="notify-close-wrap" @click="handleAboutCloseClick">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24">
+          <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+            <path d="M12,1 C18.0751322,1 23,5.92486775 23,12 C23,18.0751322 18.0751322,23 12,23 C5.92486775,23 1,18.0751322 1,12 C1,5.92486775 5.92486775,1 12,1 Z M12,2.5 C6.75329488,2.5 2.5,6.75329488 2.5,12 C2.5,17.2467051 6.75329488,21.5 12,21.5 C17.2467051,21.5 21.5,17.2467051 21.5,12 C21.5,6.75329488 17.2467051,2.5 12,2.5 Z M18.1871843,8.71966991 C18.4696171,9.00210266 18.479704,9.45374943 18.217445,9.7482689 L18.1871843,9.78033009 L12.2374369,15.7300776 C11.5682572,16.3992572 10.4919646,16.4131984 9.80582194,15.7719013 L9.76256313,15.7300776 L6.31281566,12.2803301 C6.20630904,12.1738235 6.1385321,12.0432533 6.10948484,11.9061203 L6.0949612,11.8023136 L6.0949612,11.6976864 C6.10706423,11.5235358 6.17968238,11.3528032 6.31281566,11.2196699 C6.59524841,10.9372372 7.04689518,10.9271503 7.34141465,11.1894093 L7.37347584,11.2196699 L10.4696699,14.315864 C10.7521027,14.5982967 11.2037494,14.6083836 11.4982689,14.3461246 L11.5303301,14.315864 L17.1265242,8.71966991 C17.4194174,8.4267767 17.8942911,8.4267767 18.1871843,8.71966991 Z" fill="#FFFFFF" />
+          </g>
+        </svg>
+      </div>
     </div>
-    <div class="notify-close-wrap" @click="handleAboutCloseClick">
-      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24">
-        <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-          <path d="M12,1 C18.0751322,1 23,5.92486775 23,12 C23,18.0751322 18.0751322,23 12,23 C5.92486775,23 1,18.0751322 1,12 C1,5.92486775 5.92486775,1 12,1 Z M12,2.5 C6.75329488,2.5 2.5,6.75329488 2.5,12 C2.5,17.2467051 6.75329488,21.5 12,21.5 C17.2467051,21.5 21.5,17.2467051 21.5,12 C21.5,6.75329488 17.2467051,2.5 12,2.5 Z M18.1871843,8.71966991 C18.4696171,9.00210266 18.479704,9.45374943 18.217445,9.7482689 L18.1871843,9.78033009 L12.2374369,15.7300776 C11.5682572,16.3992572 10.4919646,16.4131984 9.80582194,15.7719013 L9.76256313,15.7300776 L6.31281566,12.2803301 C6.20630904,12.1738235 6.1385321,12.0432533 6.10948484,11.9061203 L6.0949612,11.8023136 L6.0949612,11.6976864 C6.10706423,11.5235358 6.17968238,11.3528032 6.31281566,11.2196699 C6.59524841,10.9372372 7.04689518,10.9271503 7.34141465,11.1894093 L7.37347584,11.2196699 L10.4696699,14.315864 C10.7521027,14.5982967 11.2037494,14.6083836 11.4982689,14.3461246 L11.5303301,14.315864 L17.1265242,8.71966991 C17.4194174,8.4267767 17.8942911,8.4267767 18.1871843,8.71966991 Z" fill="#FFFFFF" />
-        </g>
-      </svg>
+    <div class="notification-content">
+      <p>本站为工具资源分享站点，所有资源仅供学习交流使用，禁止商业用途。</p>
+      <p style="margin-top:6px;color:#888;">© Farewell All Rights Reserved</p>
     </div>
   </div>
-  <div class="notification-content">
-    <p>本站为工具资源分享站点，所有资源仅供学习交流使用，禁止商业用途。</p>
-    <p style="margin-top:6px;color:#888;">© Farewell All Rights Reserved</p>
-  </div>
-</div>
 
 <script setup>
 import { ref, onMounted, nextTick } from 'vue'
