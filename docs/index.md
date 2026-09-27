@@ -118,10 +118,10 @@ body {
   height: 320px;
   float: left;
   margin: 0 10px 30px 10px;
-  background-color: rgba(255, 255, 255, 0.32);
-  box-shadow: 2px 4px 4px rgba(0,0,0,0.1);
+  background-color: rgba(255, 255, 255, 0.35);
+  box-shadow: 4px 4px 4px rgba(50,50,50,0.08);
   backdrop-filter: blur(3px);
-  -webkit-backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(3px);
   border-radius: 23px;
   overflow: hidden;
   transition: transform 0.3s ease;
@@ -217,9 +217,11 @@ body {
   right: 24px;
   width: 300px;
   max-width: 90vw;
-  background: #fff;
+  background-color: rgba(255, 255, 255, 0.25);
+  box-shadow: 4px 4px 4px rgba(50,50,50,0.08);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
   border-radius: 8px;
-  box-shadow: 3px 4px 15px rgba(0,0,0,0.2);
   overflow: hidden;
   z-index: 9999;
   opacity: 0;
@@ -230,7 +232,7 @@ body {
   pointer-events: auto;
 }
 .notification-header {
-  background: #3b82f6;
+  background: rgba(59, 130, 246, 0.6);
   color: white;
   padding: 8px 8px 6px 16px;
   display: flex;
@@ -290,6 +292,9 @@ body {
   width: calc(((100vw - 1200px) / 2) - 50px);
   min-width: 240px;
   max-width: 390px;
+  background: rgba(255, 255, 255, 0.38);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(3px);
   transition: transform 1s ease, opacity 1.4s ease;
 }
 /* folded：仅做动画隐藏，业务大屏小屏判断交给JS */
@@ -300,13 +305,12 @@ body {
 }
 .announce-notification {
   width: 100%;
-  background: #fff;
   border-radius: 8px;
   box-shadow: 3px 4px 15px rgba(0,0,0,0.2);
   overflow: hidden;
 }
 .announce-header {
-  background: #3b82f6;
+  background: rgba(59, 130, 246, 0.6);
   color: white;
   padding: 8px 8px 6px 15px;
   display: flex;
@@ -384,7 +388,7 @@ body {
       </div>
     </div>
     <div class="announce-content">
-      <img src="https://img.remit.ee/api/file/BQACAgUAAyEGAASHRsPbAAEaWjZqmARTpCrTTfr9oFn2PwEx5qhmMAACPzAAAm9BwFSztirx24G1Rz0E.png" >
+      <img src="/img/show/QRCode.png" >
       <p>不为碎银几两，唯求服务至诚</p>
     </div>
   </div>
@@ -461,7 +465,7 @@ body {
     <div class="notification-header">
       <div class="notification-title-wrap">
         <span class="notification-title">关于本站</span>
-        <span style="font-size: 14px;color: #60a5fa">Update：{{latestUpdateDate}}</span>
+        <span style="font-size: 14px;color: #C3D6F9;">Update：{{latestUpdateDate}}</span>
       </div>
       <div class="notify-close-wrap" @click="handleAboutCloseClick">
         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24">
