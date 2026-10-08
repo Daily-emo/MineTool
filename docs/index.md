@@ -292,9 +292,7 @@ body {
   width: calc(((100vw - 1200px) / 2) - 50px);
   min-width: 240px;
   max-width: 390px;
-  background: rgba(255, 255, 255, 0.38);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(3px);
+  /* 删掉这里的 background、backdrop-filter！ */
   transition: transform 1s ease, opacity 1.4s ease;
 }
 /* folded：仅做动画隐藏，业务大屏小屏判断交给JS */
@@ -305,9 +303,13 @@ body {
 }
 .announce-notification {
   width: 100%;
-  border-radius: 8px;
+  border-radius: 12px;
   box-shadow: 3px 4px 15px rgba(0,0,0,0.2);
   overflow: hidden;
+  /* 移到内层 */
+  background: rgba(255, 255, 255, 0.38);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(3px);
 }
 .announce-header {
   background: rgba(59, 130, 246, 0.6);
@@ -370,6 +372,7 @@ body {
     width: calc((100vw - 300px) / 2);
   }
 }
+
 </style>
 
 <!-- 左下角网站公告 -->
