@@ -80,10 +80,15 @@ body {
   color: #333;
   font-weight: 500;
 }
+.nav-vip {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
 .nav-right {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 16px;
 }
 .nav-vip-icon {
   width:24px;
@@ -283,20 +288,18 @@ body {
 .fade-out {
   animation: fadeOut 0.8s ease forwards;
 }
-/* ===== 左下角公告：大屏专属显示，移除冲突的max‑width:1800媒体查询 ===== */
+
 .announce-wrap {
   position: fixed;
   bottom: calc( max( 29px, ((100vw - 1200px) / 2 - 380px) / 2 ) );
   left: calc( max( 29px, ((100vw - 1200px) / 2 - 380px) / 2 ) );
   z-index: 9997;
   width: calc(((100vw - 1200px) / 2) - 50px);
-  min-width: 240px;
+  min-width: 200px;
   max-width: 390px;
-  /* 删掉这里的 background、backdrop-filter！ */
-  transition: transform 1s ease, opacity 1.4s ease;
+  pointer-events: none;
 }
-/* folded：仅做动画隐藏，业务大屏小屏判断交给JS */
-.announce-wrap.folded {
+.announce-wrap.folded .announce-notification {
   transform: translateX(calc(-100% - 20px));
   opacity: 0;
   pointer-events: none;
@@ -306,10 +309,10 @@ body {
   border-radius: 12px;
   box-shadow: 3px 4px 15px rgba(0,0,0,0.2);
   overflow: hidden;
-  /* 移到内层 */
   background: rgba(255, 255, 255, 0.38);
   backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(4px);
+  transition: transform 1s ease, opacity 1.4s ease;
 }
 .announce-header {
   background: rgba(59, 130, 246, 0.6);
@@ -344,7 +347,7 @@ body {
   background-color:rgba(255,255,255,0.2);
 }
 .announce-content {
-  padding: 16px 20px;
+  padding: 10px 10px 20px 10px;
   font-size: 14px;
   color: #333;
   line-height: 1.6;
@@ -354,9 +357,9 @@ body {
   display: block;
   height: auto;
   max-width: 100%;
-  margin: 0 auto 12px auto;
+  padding: 2px 5px 2px 5px;
+  margin: 2px auto 6px auto;
 }
-/* 适配卡片宽度断点：自动调整公告宽度 */
 @media (max-width: 1520px) {
   .announce-wrap {
     width: calc((100vw - 900px) / 2);
@@ -392,7 +395,7 @@ body {
     </div>
     <div class="announce-content">
       <img src="/img/show/QRCode.png" >
-      <p>不为碎银几两，唯求服务至诚</p>
+      <p style="white-space: nowrap;">不为碎银几两，唯求服务至诚</p>
     </div>
   </div>
 </div>
@@ -403,10 +406,12 @@ body {
       <img class="nav-logo" src="/img/icon/favicon.png" alt="logo" @error="handleImgErr">
       <div class="nav-title">密码的工具箱</div>
     </div>
-    <div class="nav-right">
+    <div class="nav-vip">
       <img v-if="isPrivUser()" class="nav-vip-icon" src="/img/icon/VIP.svg" alt="admin" @error="handleImgErr" />
+    <div class="nav-right">
+      <span class="nav-link" @click="downloadRemote">下载远程</span>
       <span class="nav-link" @click="openAboutModal">关于网站</span>
-    </div>
+    </div></div>
   </div>
 </div>
 
@@ -724,7 +729,10 @@ const closeAboutModal = ()=>{
 const openAboutModal = ()=>{
   openOneNotify(aboutBoxRef, aboutTimer, 10000)
 }
-
+const downloadRemote = () => {
+  // target="_blank" 新窗口打开
+  window.open('https://www.asklink.com/zh-CN/download/result?platform=windows', '_blank')
+}
 const handleImgErr = (e) => {
   const img = e.target
   if (img.dataset.lock) return
@@ -747,9 +755,9 @@ const loadToolData = async () => {
   }
 }
 
-// 判断大屏 >=1800
+// 判断大屏 >=1600
 function isBigScreen(){
-  return window.innerWidth >= 1800
+  return window.innerWidth >= 1600
 }
 
 // resize更新公告状态，用户手动关闭后不再自动弹出
@@ -796,10 +804,10 @@ onMounted(async () => {
     }
   }
 
-  // 页面挂载完成，等待2秒执行大屏判断，>=1800大屏才滑入公告
+  // 页面挂载完成，等待2.5秒执行大屏判断，>=1600大屏才滑入公告
   setTimeout(()=>{
     updateAnnounceState()
-  }, 2000)
+  }, 2500)
 
   // 监听窗口缩放
   window.addEventListener('resize', updateAnnounceState)
