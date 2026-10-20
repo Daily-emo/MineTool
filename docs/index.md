@@ -28,7 +28,7 @@ body::before {
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-image: url("https://shiratamaco.com/assets/images/portfolio/mv.avif");
+  background-image: url("https://www.shiratamaco.com/assets/images/portfolio/kv_contact.avif");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
