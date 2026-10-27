@@ -299,6 +299,9 @@ body {
   max-width: 390px;
   pointer-events: none;
 }
+.announce-wrap:not(.folded) .announce-notification {
+  pointer-events: auto;
+}
 .announce-wrap.folded .announce-notification {
   transform: translateX(calc(-100% - 20px));
   opacity: 0;
@@ -311,9 +314,10 @@ body {
   overflow: hidden;
   background: rgba(255, 255, 255, 0.38);
   backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(3px);
   transition: transform 1s ease, opacity 1.4s ease;
 }
+
 .announce-header {
   background: rgba(59, 130, 246, 0.6);
   color: white;
