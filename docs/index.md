@@ -166,6 +166,19 @@ body {
   font-size: 14px;
   color: #7B7979;
 }
+.meta-dot {
+  font-size: 14px;
+  color: #7B7979;
+  line-height: 1;
+  margin: 0 2px;
+}
+.meta-version {
+  font-size: 14px;
+  color: #7B7979;
+  white-space: nowrap;
+  letter-spacing: 0.8px;
+}
+
 .tag-svg {
   width: 16px;
   height: 16px;
@@ -174,6 +187,7 @@ body {
 .meta-date {
   font-size: 14px;
   color: #7B7979;
+  letter-spacing: 0.5px;
 }
 .card-tag {
   padding: 1px 20px;
@@ -432,10 +446,12 @@ body {
     </div>
     <div class="card-title"><b>{{ item.title }}</b></div>
     <div class="card-meta">
-      <div class="meta-left">
-        <img class="tag-svg" src="/img/icon/tag.svg" @error="handleImgErr">
-        <span>{{ item.type }}</span>
-      </div>
+    <div class="meta-left">
+      <img class="tag-svg" src="/img/icon/tag.svg" @error="handleImgErr">
+      <span>{{ item.type }}</span>
+      <span class="meta-dot">·</span>
+      <span class="meta-version">{{ item.version }}</span>
+    </div>
       <span class="meta-date">{{ item.date }}</span>
     </div>
     <div class="card-tag">{{ item.tag }}</div>
