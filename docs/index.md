@@ -24,12 +24,9 @@ body {
 body::before {
   content: "";
   position: fixed;
-  /* inset:0 代替 top/left/width/height:100vw/100vh —— 100vw 含滚动条宽度，会导致背景多出 15px */
   inset: 0;
-  /* 没图时（还在下载 / 404 / 解码失败）露出来的就是这一层底色 */
   background-color: #dbe9f8;
-  /* 只有背景图这一层，上面不再叠任何白色遮罩：图一上屏就是原图 */
-  background-image: url(/img/bg/background.avif);
+  background-image: url("https://free.boltp.com/2026/11/17/6afbfd0de9d01.webp");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
