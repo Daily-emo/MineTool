@@ -89,14 +89,18 @@ body {
   width:24px;
   height:24px;
 }
+/* 导航文字：原 #4FAAFF 在冰蓝底色上发飘、看不清，改为深一档的蓝（不是纯黑）。 */
 .nav-link {
   display: inline-flex;
   align-items: center;
-  color: #4FAAFF;
+  color: #1a5fa8;
+  font-weight: 500;
   text-decoration: none;
   font-size: 16px;
   cursor: pointer;
+  transition: color .18s ease;
 }
+.nav-link:hover { color: #0d3f74; }
 /* 卡片容器 */
 .card-container {
   width: 1200px;
@@ -118,10 +122,10 @@ body {
   height: 320px;
   float: left;
   margin: 0 10px 30px 10px;
-  background-color: rgba(255, 255, 255, 0.35);
+  background-color: rgba(255, 255, 255, 0.45);
   box-shadow: 4px 4px 4px rgba(50,50,50,0.08);
-  backdrop-filter: blur(3px);
-  -webkit-backdrop-filter: blur(3px);
+  backdrop-filter: blur(4px) saturate(110%);
+  -webkit-backdrop-filter: blur(4px) saturate(110%);
   border-radius: 23px;
   overflow: hidden;
   transition: transform 0.3s ease;

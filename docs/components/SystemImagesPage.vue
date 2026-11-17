@@ -66,39 +66,36 @@
       <section v-else-if="visibleImages.length" class="card-container" aria-label="系统镜像列表">
         <div v-for="(item, index) in visibleImages" :key="item.id"
           class="tool-card" role="button" tabindex="0"
-          :aria-label="`查看 ${item.title} 的镜像详情`"
+          :aria-label="`查看 ${item.name} 的镜像详情`"
           @click="openDetails(item.id, $event)"
           @keydown.enter.prevent="openDetails(item.id, $event)"
           @keydown.space.prevent="openDetails(item.id, $event)">
           <div class="card-cover">
-            <picture v-if="item.cover">
-              <source v-if="item.coverWebp" :srcset="item.coverWebp" type="image/webp" />
-              <img :src="item.cover" :alt="item.title" width="560" height="332"
-                :loading="index < 4 ? 'eager' : 'lazy'" :fetchpriority="index === 0 ? 'high' : undefined" decoding="async" />
-            </picture>
+            <img v-if="item.cover" :src="item.cover" :alt="`${item.name} 封面`" width="560" height="332"
+              :loading="index < 4 ? 'eager' : 'lazy'" :fetchpriority="index === 0 ? 'high' : undefined" decoding="async" />
             <div v-else class="sys-cover-placeholder" :class="`sys-placeholder-${item.tone}`" aria-hidden="true">
-              <span>{{ item.placeholderLabel }}</span>
+              <span>{{ item.placeholder }}</span>
               <small>封面待添加</small>
             </div>
           </div>
-          <div class="card-title"><b>{{ item.title }}</b></div>
+          <div class="card-title"><b>{{ item.name }}</b></div>
           <div class="card-meta">
             <div class="meta-left">
               <img class="tag-svg" src="/img/icon/tag.svg" alt="" width="16" height="16" />
-              <span>{{ item.type }}</span>
+              <span>{{ item.family }}</span>
               <span class="meta-dot">·</span>
               <span class="meta-version">{{ item.version }}</span>
             </div>
-            <span class="meta-date">{{ item.date }}</span>
+            <span class="meta-date">{{ item.package }}</span>
           </div>
-          <div class="card-tag">{{ item.tag }}</div>
+          <div class="card-tag">{{ tagLine(item) }}</div>
           <div class="card-author">
             <div class="author-avatar">
               <img :src="item.avatar || '/img/avatar/jwxz.jpg'" alt="" width="42" height="42" :loading="index < 4 ? 'eager' : 'lazy'" decoding="async" />
             </div>
             <div class="author-info">
-              <div class="name">{{ item.author || '皆为序章' }}<img v-if="item.isVip" class="vip-svg" src="/img/icon/VIP.svg" alt="VIP 标识" /></div>
-              <div class="desc">{{ item.desc }}</div>
+              <div class="name">{{ item.author || '皆为序章' }}</div>
+              <div class="desc">{{ item.summary }}</div>
             </div>
           </div>
         </div>
@@ -115,8 +112,8 @@
         <div class="sys-dialog-header">
           <div>
             <p class="sys-dialog-eyebrow">系统镜像详情 · {{ familyName(selectedImage.family) }}</p>
-            <h2 class="sys-dialog-title">{{ selectedImage.title }}</h2>
-            <p class="sys-dialog-subtitle">{{ selectedImage.subtitle }}</p>
+            <h2 class="sys-dialog-title">{{ selectedImage.name }}</h2>
+            <p class="sys-dialog-subtitle">{{ selectedImage.summary }}</p>
           </div>
           <!-- 关闭按钮：内嵌 SVG 画叉，线条两端是圆头（stroke-linecap:round），
                图形本身对 24×24 视框中心严格对称，hover 旋转 90° 时是绕着中心转的，
@@ -131,23 +128,23 @@
         <div class="sys-dialog-content">
           <div class="sys-badge-row">
             <span class="sys-info-badge">{{ selectedImage.version }}</span>
-            <span class="sys-info-badge">{{ selectedImage.format }}</span>
-            <span class="sys-info-badge">{{ selectedImage.architecture }}</span>
+            <span class="sys-info-badge">{{ selectedImage.package }}</span>
+            <span class="sys-info-badge">{{ archText(selectedImage) }}</span>
           </div>
-          <p class="sys-dialog-intro">{{ selectedImage.description }}</p>
+          <!-- 副标题就是 summary，弹窗里不再重复一遍同义长句。 -->
           <div class="sys-detail-grid">
             <div><div class="sys-detail-key">镜像版本</div><div class="sys-detail-value">{{ selectedImage.version }}</div></div>
-            <div><div class="sys-detail-key">处理器架构</div><div class="sys-detail-value">{{ selectedImage.architecture }}</div></div>
-            <div><div class="sys-detail-key">镜像格式</div><div class="sys-detail-value">{{ selectedImage.format }}</div></div>
-            <div><div class="sys-detail-key">下载来源</div><div class="sys-detail-value">{{ selectedImage.source }}</div></div>
+            <div><div class="sys-detail-key">处理器架构</div><div class="sys-detail-value">{{ archText(selectedImage) }}</div></div>
+            <div><div class="sys-detail-key">包格式</div><div class="sys-detail-value">{{ selectedImage.package }}</div></div>
+            <div><div class="sys-detail-key">下载来源</div><div class="sys-detail-value">{{ selectedImage.vendor }}</div></div>
           </div>
           <h3 class="sys-section-head">下载入口</h3>
           <div class="sys-download-actions">
-            <a v-for="link in selectedImage.downloadLinks" :key="link.url" class="sys-download-btn"
+            <a v-for="link in selectedImage.links" :key="link.url" class="sys-download-btn"
               :href="link.url" target="_blank" rel="noopener noreferrer">{{ link.label }} <span aria-hidden="true">↗</span></a>
-            <p v-if="!selectedImage.downloadLinks?.length" class="sys-dialog-intro">下载链接待配置。</p>
+            <p v-if="!selectedImage.links?.length" class="sys-dialog-intro">下载链接待配置。</p>
           </div>
-          <p v-if="selectedImage.note" class="sys-dialog-note">{{ selectedImage.note }}</p>
+          <p v-if="selectedImage.notice" class="sys-dialog-note">{{ selectedImage.notice }}</p>
         </div>
       </template>
     </dialog>
@@ -162,7 +159,7 @@ import { ref, computed, nextTick, onMounted, onBeforeUnmount } from 'vue'
 import sysCatalog from '../public/json/sys.json'
 
 const pickValid = (list) => (Array.isArray(list) ? list : [])
-  .filter(item => item && typeof item === 'object' && item.id && item.title)
+  .filter(item => item && typeof item === 'object' && item.id && item.name)
 
 const catalog = ref(pickValid(sysCatalog))
 const catalogLoading = ref(false)
@@ -229,12 +226,18 @@ const visibleImages = computed(() => {
     if (activeFamily.value !== 'all' && item.family !== activeFamily.value) return false
     if (activeArchitecture.value !== 'all' && !(Array.isArray(item.architectures) ? item.architectures : []).includes(activeArchitecture.value)) return false
     if (!query) return true
-    const haystack = [item.title, item.subtitle, item.version, item.architecture, item.description, item.source, item.tag, item.author, item.desc].join(' ').toLocaleLowerCase()
+    const haystack = [item.name, item.family, item.version, item.summary, item.vendor,
+      archText(item), (item.tags || []).join(' '), item.author].join(' ').toLocaleLowerCase()
     return haystack.includes(query)
   })
 })
 const selectedImage = computed(() => catalog.value.find(item => item.id === selectedId.value) || null)
 function familyName(key) { return familyOptions.find(item => item.key === key)?.label || key }
+// 架构只有一个来源（数组），展示用的 "x64 / ARM64" 由此派生，避免数据里再存一份字符串。
+function archText(item) { return (Array.isArray(item?.architectures) ? item.architectures : []).join(' / ') }
+// 标签行同样只从一个数组派生；这里必须整串返回，不能写成 `#{{ ... }}`：
+// 字面量 + 插值在 SSR 里是一个文本节点、在客户端会拆成两个，水合时会对不上。
+function tagLine(item) { return '#' + (Array.isArray(item?.tags) ? item.tags.join('、') : '') }
 function toggleArchitecture() { architectureOpen.value = !architectureOpen.value }
 function chooseArchitecture(value) {
   activeArchitecture.value = value
@@ -397,14 +400,18 @@ onBeforeUnmount(() => {
   width:24px;
   height:24px;
 }
+/* 导航文字：原 #4FAAFF 在冰蓝底色上发飘、看不清，改为深一档的蓝（不是纯黑）。 */
 .nav-link {
   display: inline-flex;
   align-items: center;
-  color: #4FAAFF;
+  color: #1a5fa8;
+  font-weight: 500;
   text-decoration: none;
   font-size: 16px;
   cursor: pointer;
+  transition: color .18s ease;
 }
+.nav-link:hover { color: #0d3f74; }
 /* 卡片容器 */
 .card-container {
   width: 1200px;
@@ -426,10 +433,12 @@ onBeforeUnmount(() => {
   height: 320px;
   float: left;
   margin: 0 10px 30px 10px;
-  background-color: rgba(255, 255, 255, 0.35);
+  /* .35 太透（背景图糊上来、小字发灰），.8 又太白（背景完全看不见）；
+     .45 + 4px 偏透一档：背景尽量看得清，字靠 blur 和字色本身撑住。 */
+  background-color: rgba(255, 255, 255, 0.45);
   box-shadow: 4px 4px 4px rgba(50,50,50,0.08);
-  backdrop-filter: blur(3px);
-  -webkit-backdrop-filter: blur(3px);
+  backdrop-filter: blur(4px) saturate(110%);
+  -webkit-backdrop-filter: blur(4px) saturate(110%);
   border-radius: 23px;
   overflow: hidden;
   transition: transform 0.3s ease;
@@ -445,11 +454,6 @@ onBeforeUnmount(() => {
 .card-cover {
   width: 100%;
   height: 166px;
-}
-.card-cover picture {
-  display: block;
-  width: 100%;
-  height: 100%;
 }
 .card-cover img {
   display: block;
@@ -525,14 +529,6 @@ onBeforeUnmount(() => {
 .author-info .name {
   font-size: 14px;
   color: #333;
-  display: flex;
-  align-items: center;
-  gap: 2px;
-}
-.vip-svg {
-  width: 24px;
-  height: 24px;
-  transform: translateY(-1px);
 }
 .author-info .desc {
   font-size: 15px;
@@ -555,7 +551,11 @@ onBeforeUnmount(() => {
 .sys-shell .tool-card:focus-visible { outline:2px solid #67aaf5; outline-offset:3px; }
 /* 工具条本身外观不变：保留前一版 1160px 内容区布局。 */
 .sys-content .sys-toolbar { position:relative; z-index:10; margin-left:20px; margin-right:20px; }
-.sys-toolbar { padding:17px 18px 15px; background:rgba(255,255,255,.45); border:1px solid rgba(255,255,255,.7); box-shadow:0 10px 24px rgba(45,76,112,.05); -webkit-backdrop-filter:blur(5px); backdrop-filter:blur(5px); border-radius:20px; }
+/* 工具条本身不再做 backdrop-filter：
+   带 backdrop-filter 的元素会形成 backdrop root，里面的下拉面板再去模糊时，
+   只能"看到"工具条自己这块区域，于是面板的磨砂只在工具条范围内生效、往下一出界就变透明
+   —— 这就是之前"磨砂范围不对"的根因。磨砂统一交给下拉面板自己去做。 */
+.sys-toolbar { padding:17px 18px 15px; background:rgba(255,255,255,.58); border:1px solid rgba(255,255,255,.7); box-shadow:0 10px 24px rgba(45,76,112,.05); border-radius:20px; }
 .sys-tabs { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
 .sys-tab { border:1px solid transparent; border-radius:10px; padding:8px 15px; min-height:36px; color:#64748b; background:transparent; font-size:13px; cursor:pointer; transition:background .18s,color .18s, border-color .18s, transform .18s; }
 .sys-tab:hover { background:rgba(255,255,255,.5); color:#296eaf; }
@@ -577,20 +577,25 @@ onBeforeUnmount(() => {
   width:100%; height:42px; padding:0 12px; outline:none;
   border:1px solid rgba(133,157,181,.22); border-radius:11px;
   background:rgba(255,255,255,.58); color:#334155;
-  -webkit-backdrop-filter:blur(10px); backdrop-filter:blur(10px);
   cursor:pointer; font-size:13px; text-align:left;
   transition:border-color .18s,box-shadow .18s,background .18s;
 }
 .sys-select-trigger:hover { background:rgba(255,255,255,.7); }
 .sys-select-trigger:focus-visible { border-color:#80b7ef; box-shadow:0 0 0 3px rgba(80,158,232,.11); }
-.sys-select-chevron { width:18px; height:18px; flex-shrink:0; color:#8594a6; backdrop-filter: blur(5px);
-  -webkit-backdrop-filter: blur(5px);transition:transform .22s cubic-bezier(.2,.7,.2,1); }
+/* 箭头图标上原本挂了 backdrop-filter，浏览器会以这个 18×18 的小盒子为范围去模糊
+   它背后的触发盒，结果箭头周围出现一块边界生硬的磨砂方块（"范围不对"的另一个来源）。
+   图标只负责旋转，不参与磨砂。 */
+.sys-select-chevron { width:18px; height:18px; flex-shrink:0; color:#8594a6;
+  transition:transform .22s cubic-bezier(.2,.7,.2,1); }
 .sys-select-chevron.is-open { transform:rotate(180deg); }
+/* 下拉面板是唯一的磨砂面：自己模糊自己背后（页面/卡片），范围严格等于面板本身。 */
 .sys-select-panel {
   position:absolute; top:calc(100% + 7px); left:0; width:100%; z-index:30;
-  box-sizing:border-box; padding:6px; border:1px solid rgba(255,255,255,.7); border-radius:14px;
-  background:rgba(255,255,255,.45); -webkit-backdrop-filter:blur(5px); backdrop-filter:blur(5px);
-  box-shadow:0 10px 24px rgba(45,76,112,.05);
+  box-sizing:border-box; padding:6px; border:1px solid rgba(255,255,255,.85); border-radius:14px;
+  background:rgba(249,252,255,.82);
+  -webkit-backdrop-filter:blur(18px) saturate(140%); backdrop-filter:blur(18px) saturate(140%);
+  box-shadow:0 18px 38px rgba(38,68,104,.14);
+  overflow:hidden;
   transform-origin:top right;
 }
 .sys-select-option {
