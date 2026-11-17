@@ -1,0 +1,5 @@
+/* 全局兜底色：和 body::before / .sys-home-background 的冰蓝底色一致。
+   （CSS 生效前、以及任何没被背景图覆盖到的位置，看到的都是这个颜色，不会再闪白） */
+body {
+  background-color: #dbe9f8 !important;
+}

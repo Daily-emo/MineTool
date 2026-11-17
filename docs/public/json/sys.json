@@ -1,0 +1,170 @@
+[
+  {
+    "id": "win11-25h2",
+    "family": "Windows",
+    "title": "【Win 11】系统镜像",
+    "subtitle": "Windows 11 25H2 原版镜像",
+    "version": "25H2",
+    "type": "Windows",
+    "date": "ISO",
+    "tag": "#Win11、官方原版",
+    "author": "皆为序章",
+    "desc": "Windows 11 25H2",
+    "isVip": false,
+    "architecture": "x64",
+    "architectures": [
+      "x64"
+    ],
+    "format": "ISO",
+    "source": "Microsoft",
+    "description": "Windows 11 25H2 安装镜像。请在微软下载页面确认版本、语言及计算机架构。",
+    "note": "微软下载页可能更新至更高版本，下载前请核对是否仍提供 25H2；不是永久 ISO 直链。",
+    "downloadLinks": [
+      {
+        "label": "微软 Windows 11 下载页",
+        "url": "https://www.microsoft.com/zh-cn/software-download/windows11"
+      }
+    ],
+    "cover": "img/res/sys/windows-11.png",
+    "coverWebp": "",
+    "placeholderLabel": "Windows 11",
+    "tone": "win11",
+    "avatar": "/img/avatar/jwxz.jpg",
+    "badge": ""
+  },
+  {
+    "id": "win10-22h2",
+    "family": "Windows",
+    "title": "【Win 10】系统镜像",
+    "subtitle": "Windows 10 22H2 原版镜像",
+    "version": "22H2",
+    "type": "Windows",
+    "date": "ISO",
+    "tag": "#Win10、官方原版",
+    "author": "皆为序章",
+    "desc": "Windows 10 22H2",
+    "isVip": false,
+    "architecture": "x64 / x86",
+    "architectures": [
+      "x64",
+      "x86"
+    ],
+    "format": "ISO",
+    "source": "Microsoft",
+    "description": "Windows 10 22H2 安装镜像，可在微软页面选择合适的语言和架构。",
+    "note": "Windows 10 已于 2025-10-14 结束常规支持；建议避免在无扩展安全更新的情况下作为长期联网主力系统。",
+    "downloadLinks": [
+      {
+        "label": "微软 Windows 10 ISO 下载页",
+        "url": "https://www.microsoft.com/zh-cn/software-download/windows10ISO"
+      }
+    ],
+    "cover": "img/res/sys/windows-10.png",
+    "coverWebp": "",
+    "placeholderLabel": "Windows 10",
+    "tone": "win10",
+    "avatar": "/img/avatar/jwxz.jpg",
+    "badge": ""
+  },
+  {
+    "id": "firpe",
+    "family": "PE",
+    "title": "【FirPE】维护工具箱",
+    "subtitle": "原站已有的 FirPE 资源",
+    "version": "2.1.1",
+    "type": "PE",
+    "date": "安装包",
+    "tag": "#PE系统、装机维护",
+    "author": "皆为序章",
+    "desc": "轻量化网络 WinPE",
+    "isVip": false,
+    "architecture": "x64",
+    "architectures": [
+      "x64"
+    ],
+    "format": "安装包 / PE",
+    "source": "原工具箱资源",
+    "description": "延用原首页 FirPE 工具条目的封面、作者和下载地址。",
+    "note": "这是项目原有的第三方下载页面，不是微软官方 ISO 直链。",
+    "downloadLinks": [
+      {
+        "label": "打开原站 FirPE 资源页",
+        "url": "https://pinco.seewo.com/s/19f249b175c64b5a8e3bc209e6a0697c"
+      }
+    ],
+    "cover": "/img/res/FirPE.png",
+    "coverWebp": "/img/res/FirPE.webp",
+    "placeholderLabel": "FirPE",
+    "tone": "firpe",
+    "avatar": "/img/avatar/jwxz.jpg",
+    "badge": ""
+  },
+  {
+    "id": "wepe",
+    "family": "PE",
+    "title": "【WePE】微PE工具箱",
+    "subtitle": "纯净系统维护环境",
+    "version": "2.3",
+    "type": "PE",
+    "date": "安装包",
+    "tag": "#PE系统、启动U盘",
+    "author": "皆为序章",
+    "desc": "微PE工具箱",
+    "isVip": false,
+    "architecture": "x64 / x86",
+    "architectures": [
+      "x64",
+      "x86"
+    ],
+    "format": "安装包 / PE",
+    "source": "WePE 官方网站",
+    "description": "微PE提供 64 位和 32 位版本，可在官方页面选择版本并创建维护启动介质。",
+    "note": "PE 维护工具与完整 Windows 安装 ISO 不同，下载前请核对架构及官方渠道。",
+    "downloadLinks": [
+      {
+        "label": "WePE 官方下载页",
+        "url": "https://www.wepe.com.cn/download.html"
+      }
+    ],
+    "cover": "",
+    "coverWebp": "",
+    "placeholderLabel": "WePE",
+    "tone": "wepe",
+    "avatar": "/img/avatar/jwxz.jpg",
+    "badge": ""
+  },
+  {
+    "id": "centos-stream",
+    "family": "Linux",
+    "title": "【CentOS】系统镜像",
+    "subtitle": "CentOS Stream",
+    "version": "Stream 10",
+    "type": "Linux",
+    "date": "ISO",
+    "tag": "#Linux、服务器系统",
+    "author": "皆为序章",
+    "desc": "CentOS Stream",
+    "isVip": false,
+    "architecture": "x64 / ARM64",
+    "architectures": [
+      "x64",
+      "ARM64"
+    ],
+    "format": "ISO",
+    "source": "CentOS Project",
+    "description": "CentOS Stream 官方下载页面提供 x86_64 与 ARM64 等架构的安装镜像。",
+    "note": "CentOS Stream 是持续更新的发行分支；下载 ISO 前请确认硬件架构和软件兼容性。",
+    "downloadLinks": [
+      {
+        "label": "CentOS 官方下载页",
+        "url": "https://www.centos.org/download/"
+      }
+    ],
+    "cover": "",
+    "coverWebp": "",
+    "placeholderLabel": "CentOS",
+    "tone": "centos",
+    "avatar": "/img/avatar/jwxz.jpg",
+    "badge": ""
+  }
+]

@@ -1,0 +1,14 @@
+{
+  "name": "minetool",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "vitepress dev docs",
+    "build": "vitepress build docs",
+    "preview": "vitepress preview docs",
+    "login": "npx wrangler login",
+    "push": "npx wrangler pages deploy docs/.vitepress/dist --project-name=minetool --branch=main"
+  },
+  "devDependencies": {
+    "vitepress": "^1.6.4"
+  }
+}
