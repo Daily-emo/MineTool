@@ -3,16 +3,16 @@
     "id": "firpe",
     "family": "PE",
     "name": "FirPE",
-    "version": "2.1.1",
+    "version": "v2.1.1",
     "package": "exe",
     "architectures": ["x64"],
     "vendor": "FirPE",
     "tags": ["PE 系统", "装机维护"],
     "summary": "轻量化网络 WinPE",
-    "notice": "第三方分享页面，不限速下载",
+    "notice": "可联网远程协助；第三方分享页面，不限速下载",
     "links": [
       {
-        "label": "FirPE 资源页",
+        "label": "FirPE 下载页",
         "url": "https://pinco.seewo.com/s/19f249b175c64b5a8e3bc209e6a0697c"
       }
     ],
@@ -25,13 +25,13 @@
     "id": "wepe",
     "family": "PE",
     "name": "WePE",
-    "version": "2.3",
+    "version": "v2.3",
     "package": "exe",
     "architectures": ["x64", "x86"],
     "vendor": "WePE",
     "tags": ["PE 系统", "启动盘"],
     "summary": "纯净 PE 工具箱",
-    "notice": "此 PE 工具默认不可联网！",
+    "notice": "此 PE 工具原生版本不可联网！需远程协助请选择 FirPE",
     "links": [
       {
         "label": "WePE 官方下载页",
