@@ -35,11 +35,11 @@
     "links": [
       {
         "label": "磁力链接",
-        "url": "magnet:?xt=urn:btih:bcc4ce038eb432040d7614889db63f307c824d0a&dn=zh-cn_windows_11_business_editions_version_25h2_updated_sep_2026_x64_dvd_e10f7b29.iso&xl=9018585088",
+        "url": "magnet:?xt=urn:btih:b73d139893f28f3b77b49b18c9218405030cba6f&dn=zh-cn_windows_11_business_editions_version_26h2_updated_nov_2026_x64_dvd_946c126d.iso&xl=9264506880",
         "checksum": {
-          "md5": "",
-          "sha1": "",
-          "sha256": ""
+          "md5": "F3FE6E2A9318A678109B0181CB4B7632",
+          "sha1": "B21C871F1E14715BE9DD7EC24E4EC4A9D4820922",
+          "sha256": "E1E41CC17823F41B251BE5E0BB20E3BC787389FD7947FFE736E62F7EE76CBAF4"
         }
       },
       {
@@ -95,8 +95,13 @@
     "notice": "Windows 10 已于 2025-10-14 结束常规支持。",
     "links": [
       {
-        "label": "微软官方 ISO 下载页",
-        "url": "https://www.microsoft.com/zh-cn/software-download/windows10ISO"
+        "label": "磁力链接",
+        "url": "magnet:?xt=urn:btih:aed8ca03ed278466c4a35d509bf864051b533011&dn=zh-cn_windows_10_business_editions_version_22h2_updated_oct_2025_x64_dvd_d4e92df7.iso&xl=6985566208",
+        "checksum": {
+          "md5": "1920E69FEBE29ADF3CE6AD558084B24E",
+          "sha1": "FA15E803EEDA7F0856203F27DA81AF6468902477",
+          "sha256": "2C026F88B826BE82EC0FB5A084B822298FBA026EEF9D8CFF8441E822FC72205E"
+        }
       }
     ],
     "cover": "/img/res/sys/windows-10.png",

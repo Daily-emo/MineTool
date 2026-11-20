@@ -1,21 +1,6 @@
 [
   {
     "id": 1,
-    "imgName": "FirPE.png",
-    "avatarName": "bngw.jpg",
-    "isVip": false,
-    "title": "【FirPE】电脑维护工具箱",
-    "type": "PE",
-    "version": "2.1.1",
-    "date": "2026-08-28",
-    "tag": "#PE系统、安装包",
-    "author": "不念过往",
-    "desc": "轻量化的网络 WinPE",
-    "url": "https://pinco.seewo.com/s/19f249b175c64b5a8e3bc209e6a0697c",
-    "pwd": ""
-  },
-  {
-    "id": 2,
     "imgName": "RemoteControl.png",
     "avatarName": "Farewell.jpg",
     "isVip": false,
@@ -28,6 +13,21 @@
     "desc": "多平台方便的远程部署",
     "url": "https://wwbuj.lanzouw.com/i1Zr043peaob",
     "pwd": "55gb"
+  },
+  {
+    "id": 2,
+    "imgName": "Thunder.png",
+    "avatarName": "Farewell.jpg",
+    "isVip": false,
+    "title": "【迅雷】磁力种子下载",
+    "type": "Tool",
+    "version": "1.1.0",
+    "date": "2026-11-20",
+    "tag": "#单文件、下载器",
+    "author": "Farewell",
+    "desc": "BT 磁链下载器",
+    "url": "https://wwbuj.lanzouw.com/iGNcM4gpawoh",
+    "pwd": "96n8"
   },
   {
     "id": 3,
