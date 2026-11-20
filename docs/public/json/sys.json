@@ -22,25 +22,34 @@
     "author": "皆为序章"
   },
   {
-    "id": "wepe",
-    "family": "PE",
-    "name": "WePE",
-    "version": "v2.3",
-    "package": "exe",
-    "architectures": ["x64", "x86"],
-    "vendor": "WePE",
-    "tags": ["PE 系统", "启动盘"],
-    "summary": "纯净 PE 工具箱",
-    "notice": "此 PE 工具原生版本不可联网！需远程协助请选择 FirPE",
+    "id": "win11-26h2",
+    "family": "Windows",
+    "name": "Windows 11",
+    "version": "26H2",
+    "package": "ISO",
+    "architectures": ["x64"],
+    "vendor": "Microsoft",
+    "tags": ["Win11", "官方原版"],
+    "summary": "微软官方原版介质",
+    "notice": "26H2为新版Win11，部分硬件兼容性仍在持续完善",
     "links": [
       {
-        "label": "WePE 官方下载页",
-        "url": "https://www.wepe.com.cn/download.html"
+        "label": "磁力链接",
+        "url": "magnet:?xt=urn:btih:bcc4ce038eb432040d7614889db63f307c824d0a&dn=zh-cn_windows_11_business_editions_version_25h2_updated_sep_2026_x64_dvd_e10f7b29.iso&xl=9018585088",
+        "checksum": {
+          "md5": "",
+          "sha1": "",
+          "sha256": ""
+        }
+      },
+      {
+        "label": "123盘不限速下载分流",
+        "url": "https://1840269508.share.123pan.cn/123pan/pkOWTd-bjinv"
       }
     ],
-    "cover": "/img/res/sys/WePE.png",
-    "placeholder": "WePE",
-    "tone": "wepe",
+    "cover": "/img/res/sys/windows-11.png",
+    "placeholder": "Windows 11 26H2",
+    "tone": "win11-26h2",
     "author": "皆为序章"
   },
   {
@@ -55,8 +64,17 @@
     "summary": "微软官方原版介质",
     "links": [
       {
-        "label": "微软官方下载页",
-        "url": "https://www.microsoft.com/zh-cn/software-download/windows11"
+        "label": "磁力链接",
+        "url": "magnet:?xt=urn:btih:bcc4ce038eb432040d7614889db63f307c824d0a&dn=zh-cn_windows_11_business_editions_version_25h2_updated_sep_2026_x64_dvd_e10f7b29.iso&xl=9018585088",
+        "checksum": {
+          "md5": "4EB5D1BA9D1DC40D5A3C7CD02DB964CC",
+          "sha1": "BF8BCA4F563A7F65F9711C1A748E35E43DB69404",
+          "sha256": "FF80D22B090D6E63F04D7FC30AA1A0011FCD0761DE5DAE04AA1162475D8ABAAC"
+        }
+      },
+      {
+        "label": "123盘不限速下载分流",
+        "url": "https://1840269508.share.123pan.cn/123pan/pkOWTd-Ho9nv"
       }
     ],
     "cover": "/img/res/sys/windows-11.png",
@@ -87,6 +105,28 @@
     "author": "皆为序章"
   },
   {
+    "id": "wepe",
+    "family": "PE",
+    "name": "WePE",
+    "version": "v2.3",
+    "package": "exe",
+    "architectures": ["x64", "x86"],
+    "vendor": "WePE",
+    "tags": ["PE 系统", "启动盘"],
+    "summary": "纯净 PE 工具箱",
+    "notice": "此 PE 工具原生版本不可联网！需远程协助请选择 FirPE",
+    "links": [
+      {
+        "label": "WePE 官方下载页",
+        "url": "https://www.wepe.com.cn/download.html"
+      }
+    ],
+    "cover": "/img/res/sys/WePE.png",
+    "placeholder": "WePE",
+    "tone": "wepe",
+    "author": "皆为序章"
+  },
+  {
     "id": "centos-stream",
     "family": "Linux",
     "name": "CentOS Stream",
@@ -103,6 +143,7 @@
         "url": "https://www.centos.org/download/"
       }
     ],
+    "cover": "/img/res/sys/centos-9.png",
     "placeholder": "CentOS",
     "tone": "centos",
     "author": "皆为序章"

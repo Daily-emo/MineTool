@@ -138,15 +138,46 @@
             <div><div class="sys-detail-key">包格式</div><div class="sys-detail-value">{{ selectedImage.package }}</div></div>
             <div><div class="sys-detail-key">下载来源</div><div class="sys-detail-value">{{ selectedImage.vendor }}</div></div>
           </div>
-          <h3 class="sys-section-head">下载入口</h3>
-          <div class="sys-download-actions">
+          <h3 class="sys-section-head">
+            下载入口
+            <span v-if="selectedImage.links?.length" class="sys-section-hint">点击按钮，将在新标签页打开下载页</span>
+          </h3>
+          <!-- 下载入口：只有一条链接时占满整行；两条链接时改为左右分栏（不再上下堆叠）。
+               右侧箭头是内联 SVG 折线（圆头），静止时每 3.2s 轻微右移一次做点击引导，
+               hover / 键盘聚焦时定格在右移位置，配合上方的提示文字说明“点了会新开标签页”。 -->
+          <div class="sys-download-actions" :class="{ 'is-duo': (selectedImage.links?.length || 0) > 1 }">
             <a v-for="link in selectedImage.links" :key="link.url" class="sys-download-btn"
-              :href="link.url" target="_blank" rel="noopener noreferrer">{{ link.label }} <span aria-hidden="true">↗</span></a>
+              :href="link.url" target="_blank" rel="noopener noreferrer"
+              @pointerenter="onDownloadEnter(link)"
+              @pointerleave="scheduleChecksumHide"
+              @focus="onDownloadFocus(link, $event)">
+              <span class="sys-download-label">{{ link.label }}</span>
+              <span class="sys-download-arrow-track">
+                <svg class="sys-download-arrow" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                  <polyline points="8 5.4 14.8 12 8 18.6" fill="none" stroke="currentColor"
+                    stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </span>
+            </a>
             <p v-if="!selectedImage.links?.length" class="sys-dialog-intro">下载链接待配置。</p>
           </div>
+          <!-- 磁力链接校验卡是详情卡之外的独立浮层（popover，渲染在 top layer），
+               不参与详情卡布局：鼠标经过带 checksum 的下载按钮时出现，
+               宽度对齐整行下载按钮、贴在详情卡下方，关闭详情卡时一起隐藏。 -->
           <p v-if="selectedImage.notice" class="sys-dialog-note">{{ selectedImage.notice }}</p>
         </div>
       </template>
+      <div ref="checksumCard" popover="manual" class="sys-checksum-float" :class="{ 'is-open': checksumOpen }"
+        @pointerenter="clearChecksumHide"
+        @pointerleave="scheduleChecksumHide"
+        @toggle="onChecksumToggle">
+        <div class="sys-checksum-card-inner">
+          <p v-for="row in checksumRows" :key="row.key" class="sys-checksum-row">
+            <span class="sys-checksum-key">{{ row.label }}</span>
+            <span class="sys-checksum-value">{{ row.value }}</span>
+          </p>
+        </div>
+      </div>
     </dialog>
   </div>
 </template>
@@ -232,6 +263,155 @@ const visibleImages = computed(() => {
   })
 })
 const selectedImage = computed(() => catalog.value.find(item => item.id === selectedId.value) || null)
+// 磁力链接校验卡：数据来自 link.checksum（也兼容直接写在 link 上的 md5/sha1/sha256）。
+const checksumOpen = ref(false)
+const checksumLink = ref(null)
+const checksumCard = ref(null)
+const CHECKSUM_FIELDS = [['md5', 'MD5'], ['sha1', 'SHA1'], ['sha256', 'SHA256']]
+let checksumHideTimer = null
+let checksumShowToken = 0
+function checksumRowsOf(link) {
+  const source = link && typeof link.checksum === 'object' && link.checksum ? link.checksum : link
+  if (!source) return []
+  return CHECKSUM_FIELDS
+    .map(([key, label]) => ({ key, label, value: typeof source[key] === 'string' ? source[key].trim() : '' }))
+    .filter(row => row.value)
+}
+const checksumRows = computed(() => checksumRowsOf(checksumLink.value))
+function clearChecksumHide() {
+  if (checksumHideTimer !== null) {
+    clearTimeout(checksumHideTimer)
+    checksumHideTimer = null
+  }
+}
+function scheduleChecksumHide() {
+  clearChecksumHide()
+  // 给指针从按钮移到校验卡留出时间；这期间进入卡片会取消本次收起。
+  checksumHideTimer = window.setTimeout(() => {
+    checksumHideTimer = null
+    if (checksumCard.value?.matches(':hover')) return
+    hideChecksum()
+  }, 260)
+}
+function hideChecksum() {
+  clearChecksumHide()
+  checksumShowToken += 1
+  // 只淡出，不关闭 popover：毛玻璃层保持常驻，下次悬停不会再重建一次。
+  checksumOpen.value = false
+}
+function ensureChecksumPopover() {
+  const card = checksumCard.value
+  if (!card || card.matches(':popover-open')) return
+  card.showPopover()
+}
+function warmChecksumCard() {
+  const card = checksumCard.value
+  if (!card || !detailDialog.value?.open) return
+  prepareChecksumCard()
+  ensureChecksumPopover()
+}
+function closeChecksumCard() {
+  clearChecksumHide()
+  checksumShowToken += 1
+  checksumOpen.value = false
+  checksumLink.value = null
+  const card = checksumCard.value
+  if (card?.matches(':popover-open')) card.hidePopover()
+}
+function onChecksumToggle(event) {
+  if (event.newState === 'closed') checksumOpen.value = false
+}
+// 浮层卡宽度对齐系统镜像信息卡，默认贴在详情卡下方；下方放不下就翻到上方，
+// 还放不下就贴底（不压按钮），最矮的屏幕才浮到信息区上。
+function positionChecksumCard() {
+  const dialog = detailDialog.value
+  const card = checksumCard.value
+  const actions = dialog?.querySelector('.sys-download-actions')
+  if (!dialog || !card || !actions) return
+  const vw = window.innerWidth
+  const vh = window.innerHeight
+  const margin = 6
+  const gap = 10
+  const a = actions.getBoundingClientRect()
+  const d = dialog.getBoundingClientRect()
+  const gridRect = dialog.querySelector('.sys-detail-grid')?.getBoundingClientRect()
+  const width = Math.max(220, Math.min(Math.round(gridRect?.width ?? a.width), vw - margin * 2))
+  card.style.width = `${width}px`
+  const cardHeight = card.getBoundingClientRect().height
+  let left = Math.round(gridRect?.left ?? a.left)
+  let top = Math.round(d.bottom + gap)
+  if (top + cardHeight > vh - margin) {
+    const above = Math.round(d.top - gap - cardHeight)
+    const bottomPinned = Math.round(vh - margin - cardHeight)
+    if (above >= margin) {
+      top = above
+    } else if (bottomPinned >= a.bottom + 8) {
+      // 贴在视口底部，卡片只盖住详情卡下沿的提示区，不压下载按钮。
+      top = bottomPinned
+    } else {
+      // 高度实在不够时，把卡片浮到详情卡的信息区上，别压住下载按钮，
+      // 这样指针仍停在按钮上，点击不会被打断。
+      const grid = dialog.querySelector('.sys-detail-grid')
+      const actionsTop = a.top
+      const overlayTop = Math.round(grid?.getBoundingClientRect().top ?? d.top + 64)
+      top = Math.max(margin, Math.min(overlayTop, Math.round(actionsTop - cardHeight - 8)))
+    }
+  }
+  left = Math.min(Math.max(margin, left), Math.max(margin, vw - margin - width))
+  card.style.left = `${left}px`
+  card.style.top = `${top}px`
+}
+function prepareChecksumCard() {
+  const dialog = detailDialog.value
+  const card = checksumCard.value
+  const grid = dialog?.querySelector('.sys-detail-grid')
+  if (!dialog || !card || !grid) return
+  const g = grid.getBoundingClientRect()
+  const vw = window.innerWidth
+  const width = Math.max(220, Math.min(Math.round(g.width), vw - 12))
+  card.style.width = `${width}px`
+  card.style.left = `${Math.round(g.left)}px`
+  card.style.top = `${Math.round(dialog.getBoundingClientRect().bottom + 10)}px`
+}
+async function waitForDialogEntrance() {
+  const dialog = detailDialog.value
+  if (!dialog?.open || !dialog.getAnimations) return
+  // 校验卡在 dialog 的 top layer 之外，不能跟随 dialog 的 transform；
+  // 等待弹窗入场动画结束后再读取几何位置，避免两者短暂错位。
+  const entrance = dialog.getAnimations().find(animation =>
+    animation.effect?.target === dialog && animation.playState === 'running'
+  )
+  if (entrance) await entrance.finished.catch(() => {})
+}
+function showChecksum(link) {
+  if (!checksumRowsOf(link).length) { hideChecksum(); return }
+  clearChecksumHide()
+  const showToken = ++checksumShowToken
+  checksumLink.value = link
+  nextTick(async () => {
+    const card = checksumCard.value
+    if (!card || !checksumLink.value || showToken !== checksumShowToken) return
+    // 先预设尺寸与横向位置，再确保 popover 已进入 top layer。
+    prepareChecksumCard()
+    ensureChecksumPopover()
+    // dialog 正在入场时，其边界仍在变化；等动画完成后再定位浮层。
+    await waitForDialogEntrance()
+    if (showToken !== checksumShowToken || !checksumLink.value || dialogClosing.value) return
+    positionChecksumCard()
+    // 把定位写入先提交一帧，再开始透明度/位移动画，避免首次显示时闪位。
+    requestAnimationFrame(() => {
+      if (showToken === checksumShowToken && checksumLink.value && !dialogClosing.value) {
+        checksumOpen.value = true
+      }
+    })
+  })
+}
+function onDownloadEnter(link) { showChecksum(link) }
+function onDownloadFocus(link, event) {
+  // 鼠标点击同样会触发 focus，但校验卡只由鼠标经过或键盘聚焦（:focus-visible）触发。
+  if (!event?.target?.matches?.(':focus-visible')) return
+  showChecksum(link)
+}
 function familyName(key) { return familyOptions.find(item => item.key === key)?.label || key }
 // 架构只有一个来源（数组），展示用的 "x64 / ARM64" 由此派生，避免数据里再存一份字符串。
 function archText(item) { return (Array.isArray(item?.architectures) ? item.architectures : []).join(' / ') }
@@ -283,15 +463,18 @@ async function openDetails(id, event) {
   lastDialogTrigger = event?.currentTarget || document.activeElement
   selectedId.value = id
   architectureOpen.value = false
+  closeChecksumCard()
   await nextTick()
   if (detailDialog.value && !detailDialog.value.open) {
     detailDialog.value.showModal()
     await nextTick()
     closeButton.value?.focus({ preventScroll: true })
+    warmChecksumCard()
   }
 }
 function closeDetails() {
   if (!detailDialog.value?.open || dialogClosing.value) return
+  closeChecksumCard()
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
     detailDialog.value.close()
     return
@@ -310,15 +493,20 @@ function onDialogClose() {
   }
   dialogClosing.value = false
   selectedId.value = ''
+  closeChecksumCard()
   lastDialogTrigger?.focus?.({ preventScroll: true })
   lastDialogTrigger = null
 }
 function onDialogClick(event) { if (event.target === detailDialog.value) closeDetails() }
 onMounted(() => {
   document.addEventListener('pointerdown', onOutsidePointer)
+  window.addEventListener('resize', hideChecksum)
 })
 onBeforeUnmount(() => {
   document.removeEventListener('pointerdown', onOutsidePointer)
+  window.removeEventListener('resize', hideChecksum)
+  clearChecksumHide()
+  closeChecksumCard()
   if (catalogRequest) catalogRequest.abort()
   if (dialogCloseTimer !== null) clearTimeout(dialogCloseTimer)
   lastDialogTrigger = null
@@ -658,10 +846,88 @@ onBeforeUnmount(() => {
 .sys-detail-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; padding:17px; background:rgba(255,255,255,.32); border:1px solid rgba(255,255,255,.42); border-radius:13px; }
 .sys-detail-key { color:#91a0b0; font-size:11px; margin-bottom:4px; }
 .sys-detail-value { color:#32455e; font-size:13px; word-wrap:break-word; }
-.sys-section-head { margin:22px 0 11px; font-size:14px; font-weight:680; color:#314158; }
-.sys-download-actions { display:grid; gap:9px; }
-.sys-download-btn { min-height:46px; border-radius:11px; background:#4f9de6; color:white; text-decoration:none; font-size:14px; font-weight:620; display:flex; align-items:center; justify-content:center; gap:9px; padding:11px 16px; transition:background .2s, transform .2s; }
-.sys-download-btn:hover { color:white; background:#3584d3; transform:translateY(-1px); }
+.sys-section-head { display:flex; align-items:baseline; flex-wrap:wrap; gap:3px 10px; margin:22px 0 11px; font-size:14px; font-weight:680; color:#314158; }
+/* 说明性小字：只做"点击后会发生什么"的引导，不抢标题层级。 */
+.sys-section-hint { font-size:11.5px; font-weight:400; color:#8b9aab; letter-spacing:.01em; }
+/* 下载入口：默认单列占满整行；两条链接时左右分栏，超过两条按两列换行。 */
+.sys-download-actions { display:grid; grid-template-columns:minmax(0,1fr); gap:9px; }
+.sys-download-actions.is-duo { grid-template-columns:repeat(2,minmax(0,1fr)); }
+.sys-download-btn {
+  position:relative; min-height:48px; border-radius:11px; background:#4f9de6; color:white;
+  text-decoration:none; font-size:14px; font-weight:620; display:flex; align-items:center;
+  justify-content:center; gap:7px; padding:11px 15px; line-height:1.35; text-align:center;
+  box-shadow:0 6px 14px rgba(51,116,180,.14);
+  transition:background .2s, transform .2s, box-shadow .2s;
+}
+.sys-download-btn:hover { color:white; background:#3584d3; box-shadow:0 10px 20px rgba(43,105,168,.22); }
+.sys-download-btn:active { transform:translateY(0) scale(.995); box-shadow:0 4px 10px rgba(43,105,168,.2); }
+.sys-download-btn:focus-visible { outline:2px solid rgba(255,255,255,.92); outline-offset:2px; }
+.sys-download-label { min-width:0; }
+/* 折线右箭头：静态位移放在外层 track（可过渡），循环微动放在内层 svg。
+   之前在同一元素上用 animation:none 切 transform，浏览器会瞬间跳位；
+   拆层后聚焦/悬停时 track 平滑右移 4px，内层循环暂停、不会突然归零。 */
+.sys-download-arrow-track {
+  display:inline-flex; width:17px; height:17px; flex:0 0 17px;
+  transform:translateX(0);
+  transition:transform .26s cubic-bezier(.2,.65,.3,1);
+}
+.sys-download-arrow {
+  width:100%; height:100%; color:currentColor; opacity:.95;
+  animation:sys-arrow-nudge 3.2s cubic-bezier(.35,0,.25,1) infinite;
+}
+.sys-download-btn:hover .sys-download-arrow-track,
+.sys-download-btn:focus-visible .sys-download-arrow-track { transform:translateX(4px); }
+.sys-download-btn:hover .sys-download-arrow,
+.sys-download-btn:focus-visible .sys-download-arrow { animation-play-state:paused; }
+
+/* 磁力校验卡：独立 popover 常驻 top layer，隐藏时只改变可见状态，不反复创建磨砂层。
+   backdrop-filter 保持固定强度；由卡片本体的 opacity + translate 和内部高光渐变完成过渡，
+   不让父级 opacity 建立额外 backdrop root，避免模糊背景被截断或显示时闪变。 */
+.sys-checksum-float {
+  position:fixed; inset:auto; margin:0; padding:0; border:0; background:transparent;
+  width:auto; max-width:none; max-height:none; overflow:visible;
+  pointer-events:none; color:#304055;
+}
+.sys-checksum-float.is-open { pointer-events:auto; }
+.sys-checksum-card-inner {
+  position:relative; isolation:isolate; overflow:hidden;
+  display:grid; gap:7px; padding:15px 16px; border-radius:14px;
+  opacity:0; transform:translate3d(0,7px,0); pointer-events:none;
+  transform-origin:top center;
+  transition:opacity .24s cubic-bezier(.22,.61,.36,1),transform .28s cubic-bezier(.2,.72,.25,1);
+  background:linear-gradient(132deg,rgba(255,255,255,.66) 0%,rgba(246,250,255,.57) 48%,rgba(226,239,252,.49) 100%);
+  border:1px solid rgba(255,255,255,.82);
+  box-shadow:0 16px 38px rgba(31,53,79,.15),0 2px 6px rgba(31,53,79,.055),inset 0 1px 0 rgba(255,255,255,.72);
+  -webkit-backdrop-filter:blur(20px) saturate(148%); backdrop-filter:blur(20px) saturate(148%);
+}
+.sys-checksum-float.is-open .sys-checksum-card-inner {
+  opacity:1; transform:translate3d(0,0,0); pointer-events:auto;
+}
+.sys-checksum-card-inner::before {
+  content:""; position:absolute; inset:0; z-index:0; pointer-events:none; border-radius:inherit;
+  background:linear-gradient(118deg,rgba(255,255,255,.58) 0%,rgba(255,255,255,.12) 46%,rgba(139,181,222,.12) 100%);
+  opacity:.56; transition:opacity .28s ease;
+}
+.sys-checksum-float.is-open .sys-checksum-card-inner::before { opacity:.92; }
+.sys-checksum-row {
+  position:relative; z-index:1;
+  display:grid; grid-template-columns:46px minmax(0,1fr); gap:7px; align-items:baseline; margin:0;
+}
+.sys-checksum-key {
+  display:inline-flex; align-items:center; width:max-content; min-height:19px; padding:2px 6px;
+  color:#58728d; background:rgba(222,237,251,.58); border:1px solid rgba(255,255,255,.62);
+  border-radius:6px; font-size:10px; font-weight:700; line-height:1.45; letter-spacing:.035em; white-space:nowrap;
+}
+.sys-checksum-value {
+  color:#263b52; font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  font-size:10.5px; line-height:1.7; letter-spacing:.012em; overflow-wrap:anywhere; word-break:normal;
+}
+@keyframes sys-arrow-nudge {
+  0%, 70%, 100% { transform:translateX(0); }
+  78% { transform:translateX(3px); }
+  86% { transform:translateX(0); }
+  93% { transform:translateX(2px); }
+}
 .sys-dialog-note { margin:14px 0 0; padding:12px 13px; border-left:3px solid rgba(222,163,77,.75); background:rgba(255,248,230,.52); border-radius:6px 9px 9px 6px; color:#806643; font-size:12px; line-height:1.75; }
 .sys-hash { font-size:12px; color:#68778a; word-break:break-all; background:#f5f8fb; border-radius:9px; padding:12px; }
 
@@ -677,6 +943,13 @@ onBeforeUnmount(() => {
   .sys-dialog-header { padding:20px 18px 14px; }
   .sys-dialog-content { padding:17px 18px 20px; }
   .sys-dialog-title { font-size:22px; }
+  /* 窄屏仍然保持两条链接左右分栏：字号、内边距和箭头一起缩小，长标题允许折行。 */
+  .sys-download-btn { min-height:46px; padding:10px 11px; font-size:13px; gap:5px; }
+  .sys-download-arrow-track { width:15px; height:15px; flex-basis:15px; }
+  .sys-checksum-card-inner { padding:13px 14px; gap:6px; }
+  .sys-checksum-row { grid-template-columns:42px minmax(0,1fr); gap:5px; }
+  .sys-checksum-key { min-height:18px; padding:2px 5px; font-size:9.5px; }
+  .sys-checksum-value { font-size:10px; }
 }
 @media (max-width:370px) {
   .sys-shell .nav-right { gap:6px; }
