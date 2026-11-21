@@ -3,3 +3,11 @@
 body {
   background-color: #dbe9f8 !important;
 }
+
+/* 统一关闭移动端点击时浏览器绘制的蓝色 tap highlight。
+   键盘操作的 :focus-visible 焦点提示由各组件保留。 */
+*,
+*::before,
+*::after {
+  -webkit-tap-highlight-color: transparent;
+}
