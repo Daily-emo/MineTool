@@ -2,21 +2,10 @@
   <div class="sys-shell">
     <!-- 首页的背景图与渐变参数，绝不叠加旧版 sys 的白色遮罩。 -->
     <div class="sys-home-background" aria-hidden="true"></div>
-    <header class="site-nav">
-      <div class="nav-inner">
-        <a class="nav-left" href="/" aria-label="返回密码的工具箱首页">
-          <img class="nav-logo" src="/img/icon/favicon.png" alt="" width="19" height="21" />
-          <span class="nav-title">密码的工具箱</span>
-        </a>
-        <div class="nav-vip">
-          <nav class="nav-right" aria-label="网站导航">
-            <!-- 本页就是"系统镜像"，导航里不再重复放一个指向自己的"系统镜像"，
-                 改为"回到主页"；另一个入口是"下载远程"。 -->
-            <a class="nav-link" href="/">回到主页</a>
-          </nav>
-        </div>
-      </div>
-    </header>
+    <SiteNavigation>
+      <!-- 系统页不重复展示当前入口，只保留返回首页。 -->
+      <a class="nav-link" href="/">回到主页</a>
+    </SiteNavigation>
 
     <main class="sys-content">
       <!-- 延用原有的 sys-toolbar；只替换架构选择器。 -->
@@ -187,6 +176,7 @@
 
 <script setup>
 import { ref, computed, nextTick, onMounted, onBeforeUnmount } from 'vue'
+import SiteNavigation from './SiteNavigation.vue'
 // The single source of truth lives at docs/public/json/sys.json.
 // 构建期直接导入：SSR 出来的 HTML 就带完整镜像列表，首屏不用等 fetch，
 // 也不会出现"正在加载… -> 卡片突然插入"的布局跳动。
@@ -537,83 +527,6 @@ onBeforeUnmount(() => {
 
 .sys-shell a {
   text-decoration: none;
-}
-
-.sys-shell .nav-left {
-  text-decoration: none;
-}
-
-.site-nav {
-  width: 100%;
-  height: 50px;
-  background-color: rgba(255, 255, 255, 0.5);
-  box-shadow: 2px 4px 4px rgba(0,0,0,0.07);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 9999;
-}
-
-.nav-inner {
-  width: 1150px;
-  height: 50px;
-  margin: 0 auto;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.nav-left {
-  display: flex;
-  align-items: center;
-}
-
-.nav-logo {
-  width: 19px;
-  height: 21px;
-  margin-right: 8px;
-}
-
-.nav-title {
-  font-size: 16px;
-  color: #333;
-  font-weight: 500;
-}
-
-.nav-vip {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.nav-right {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-
-.nav-vip-icon {
-  width: 24px;
-  height: 24px;
-}
-
-/* 导航文字：原 #4FAAFF 在冰蓝底色上发飘、看不清，改为深一档的蓝（不是纯黑）。 */
-
-.nav-link {
-  display: inline-flex;
-  align-items: center;
-  color: #1a5fa8;
-  font-weight: 500;
-  text-decoration: none;
-  font-size: 16px;
-  cursor: pointer;
-  transition: color .18s ease;
-}
-
-.nav-link:hover {
-  color: #0d3f74;
 }
 
 /* 卡片容器 */
@@ -1614,10 +1527,6 @@ onBeforeUnmount(() => {
   .sys-content {
     width: 300px;
     padding-top: 74px;
-  }
-
-  .sys-shell .nav-inner {
-    width: calc(100% - 24px);
   }
 
   .sys-content .sys-toolbar {
