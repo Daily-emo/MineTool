@@ -33,8 +33,17 @@ function getEdgeInfo(request, requestId) {
     country: cf.country || null,
     region: cf.region || null,
     asn: Number.isFinite(cf.asn) ? cf.asn : null,
+    asOrganization: cf.asOrganization || null,
+    city: cf.city || null,
+    timezone: cf.timezone || null,
     httpProtocol: cf.httpProtocol || null,
     tlsVersion: cf.tlsVersion || null,
+    clientTcpRttMs: Number.isFinite(cf.clientTcpRtt)
+      ? cf.clientTcpRtt
+      : null,
+    clientQuicRttMs: Number.isFinite(cf.clientQuicRtt)
+      ? cf.clientQuicRtt
+      : null,
     rayId: requestId,
   };
 }
@@ -72,9 +81,8 @@ export default {
         }
 
         const edge = getEdgeInfo(request, requestId);
-        const serverProcessingMs = Number(
-          (performance.now() - requestStartedAt).toFixed(3),
-        );
+        const clientToEdgeRttMs =
+          edge.clientQuicRttMs ?? edge.clientTcpRttMs;
 
         const payload = {
           ok: true,
@@ -98,18 +106,31 @@ export default {
             },
           },
           timing: {
-            serverProcessingMs,
+            serverProcessingMs: null,
+            clientToEdgeRttMs,
+            clientTcpRttMs: edge.clientTcpRttMs,
+            clientQuicRttMs: edge.clientQuicRttMs,
             scope:
-              "Cloudflare edge handler time only; excludes client-to-edge network latency.",
+              "serverProcessingMs measures Worker-side request metadata and payload assembly before JSON serialization; clientToEdgeRttMs is Cloudflare's smoothed client-to-edge RTT when available. Neither is full browser end-to-end timing.",
           },
         };
 
+        const serverProcessingMs = Number(
+          (performance.now() - requestStartedAt).toFixed(3),
+        );
+        payload.timing.serverProcessingMs = serverProcessingMs;
+
+        const responseHeaders = {
+          "X-Request-ID": requestId,
+          "X-Response-Time-Ms": String(serverProcessingMs),
+          "Server-Timing": `app;dur=${serverProcessingMs}`,
+        };
+        if (clientToEdgeRttMs !== null) {
+          responseHeaders["X-Client-Edge-RTT-Ms"] = String(clientToEdgeRttMs);
+        }
+
         return jsonResponse(payload, {
-          headers: {
-            "X-Request-ID": requestId,
-            "X-Response-Time-Ms": String(serverProcessingMs),
-            "Server-Timing": `app;dur=${serverProcessingMs}`,
-          },
+          headers: responseHeaders,
           head: request.method === "HEAD",
         });
       }
