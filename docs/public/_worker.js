@@ -44,6 +44,9 @@ function getEdgeInfo(request, requestId) {
     clientQuicRttMs: Number.isFinite(cf.clientQuicRtt)
       ? cf.clientQuicRtt
       : null,
+    deliveryRateBytesPerSec: Number.isFinite(cf.edgeL4?.deliveryRate)
+      ? cf.edgeL4.deliveryRate
+      : null,
     rayId: requestId,
   };
 }
@@ -81,8 +84,13 @@ export default {
         }
 
         const edge = getEdgeInfo(request, requestId);
-        const clientToEdgeRttMs =
-          edge.clientQuicRttMs ?? edge.clientTcpRttMs;
+        // Select RTT by the negotiated transport protocol.
+        // Cloudflare may expose 0 for a transport that was not used.
+        const isHttp3 = edge.httpProtocol === "HTTP/3";
+        const clientToEdgeRttMs = isHttp3
+          ? edge.clientQuicRttMs
+          : edge.clientTcpRttMs;
+        const clientToEdgeTransport = isHttp3 ? "QUIC" : "TCP";
 
         const payload = {
           ok: true,
@@ -108,8 +116,10 @@ export default {
           timing: {
             serverProcessingMs: null,
             clientToEdgeRttMs,
+            clientToEdgeTransport,
             clientTcpRttMs: edge.clientTcpRttMs,
             clientQuicRttMs: edge.clientQuicRttMs,
+            deliveryRateBytesPerSec: edge.deliveryRateBytesPerSec,
             scope:
               "serverProcessingMs measures Worker-side request metadata and payload assembly before JSON serialization; clientToEdgeRttMs is Cloudflare's smoothed client-to-edge RTT when available. Neither is full browser end-to-end timing.",
           },
@@ -127,6 +137,7 @@ export default {
         };
         if (clientToEdgeRttMs !== null) {
           responseHeaders["X-Client-Edge-RTT-Ms"] = String(clientToEdgeRttMs);
+          responseHeaders["X-Client-Edge-Transport"] = clientToEdgeTransport;
         }
 
         return jsonResponse(payload, {
