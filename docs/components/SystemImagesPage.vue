@@ -542,9 +542,6 @@ onBeforeUnmount(() => {
     width: 900px;
   }
 
-  .nav-inner {
-    width: 85vw;
-  }
 }
 
 @media (max-width: 920px) {
@@ -1611,22 +1608,6 @@ onBeforeUnmount(() => {
 
   .sys-checksum-key, .sys-checksum-value {
     font-size: 9.5px;
-  }
-
-  .sys-shell .nav-right {
-    gap: 6px;
-  }
-
-  .sys-shell .nav-link {
-    font-size: 11px;
-  }
-
-  .sys-shell .nav-title {
-    font-size: 12px;
-  }
-
-  .sys-shell .nav-logo {
-    margin-right: 4px;
   }
 }
 
