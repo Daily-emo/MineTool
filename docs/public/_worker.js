@@ -41,6 +41,7 @@ function getEdgeInfo(request, requestId) {
 
 export default {
   async fetch(request, env) {
+    const requestStartedAt = performance.now();
     const url = new URL(request.url);
 
     // Keep all non-API traffic on Pages' static asset service.
@@ -70,10 +71,9 @@ export default {
           );
         }
 
-        const startedAt = performance.now();
         const edge = getEdgeInfo(request, requestId);
         const serverProcessingMs = Number(
-          (performance.now() - startedAt).toFixed(3),
+          (performance.now() - requestStartedAt).toFixed(3),
         );
 
         const payload = {
