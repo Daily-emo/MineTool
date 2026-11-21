@@ -111,7 +111,7 @@ defineProps({
   min-width: 0;
 }
 
-.nav-vip-icon {
+:slotted(.nav-vip-icon) {
   display: block;
   flex: 0 0 24px;
   width: 24px;
@@ -129,7 +129,7 @@ defineProps({
   white-space: nowrap;
 }
 
-.nav-link {
+:slotted(.nav-link) {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -154,13 +154,13 @@ defineProps({
 }
 
 .nav-left:focus-visible,
-.nav-link:focus-visible {
+:slotted(.nav-link:focus-visible) {
   outline: 2px solid rgba(55, 132, 207, 0.8);
   outline-offset: 2px;
 }
 
 @media (hover: hover) and (pointer: fine) {
-  .nav-link:hover {
+  :slotted(.nav-link:hover) {
     color: #0d3f74;
   }
 }
@@ -196,7 +196,7 @@ defineProps({
     gap: 12px;
   }
 
-  .nav-link {
+  :slotted(.nav-link) {
     font-size: 13px;
     line-height: 18px;
   }
