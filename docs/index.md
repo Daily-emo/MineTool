@@ -41,66 +41,6 @@ body {
   user-select: none;
   -webkit-user-select: none;
 }
-.site-nav {
-  width: 100%;
-  height: 50px;
-  background-color: rgba(255, 255, 255, 0.5);
-  box-shadow: 2px 4px 4px rgba(0,0,0,0.07);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 9999;
-}
-.nav-inner {
-  width: 1150px;
-  height: 50px;
-  margin: 0 auto;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-.nav-left {
-  display: flex;
-  align-items: center;
-}
-.nav-logo {
-  width: 19px;
-  height: 21px;
-  margin-right: 8px;
-}
-.nav-title {
-  font-size: 16px;
-  color: #333;
-  font-weight: 500;
-}
-.nav-vip {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-.nav-right {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-.nav-vip-icon {
-  width:24px;
-  height:24px;
-}
-/* 导航文字：原 #4FAAFF 在冰蓝底色上发飘、看不清，改为深一档的蓝（不是纯黑）。 */
-.nav-link {
-  display: inline-flex;
-  align-items: center;
-  color: #1a5fa8;
-  font-weight: 500;
-  text-decoration: none;
-  font-size: 16px;
-  cursor: pointer;
-  transition: color .18s ease;
-}
-.nav-link:hover { color: #0d3f74; }
 /* 卡片容器 */
 .card-container {
   width: 1200px;
@@ -109,7 +49,6 @@ body {
 }
 @media (max-width: 1220px) {
   .card-container { width: 900px; }
-  .nav-inner { width: 85vw; }
 }
 @media (max-width: 920px) {
   .card-container { width: 600px; }
@@ -399,11 +338,7 @@ body {
   }
 }
 
-@media (max-width: 620px) {
-  .nav-right { gap: 8px; }
-  .nav-link { font-size: 13px; }
-  .nav-title { font-size: 14px; }
-}
+
 </style>
 
 <!-- 左下角网站公告 -->
@@ -428,21 +363,22 @@ body {
   </div>
 </div>
 
-<div class="site-nav">
-  <div class="nav-inner">
-    <div class="nav-left">
-      <img class="nav-logo" src="/img/icon/favicon.png" alt="logo" @error="handleImgErr">
-      <div class="nav-title">密码的工具箱</div>
-    </div>
-    <div class="nav-vip">
-      <img v-if="isPrivUser()" class="nav-vip-icon" src="/img/icon/VIP.svg" alt="admin" @error="handleImgErr" />
-    <div class="nav-right">
-      <a class="nav-link" href="https://www.asklink.com/zh-CN/download/result?platform=windows" target="_blank" rel="noopener noreferrer">远程</a>
-      <a class="nav-link" href="/sys" style="white-space:nowrap">系统</a>
-      <span class="nav-link" @click="openAboutModal">关于</span>
-    </div></div>
-  </div>
-</div>
+<SiteNavigation>
+  <template #badge>
+    <img
+      v-if="isPrivUser()"
+      class="nav-vip-icon"
+      src="/img/icon/VIP.svg"
+      alt="admin"
+      width="24"
+      height="24"
+      @error="handleImgErr"
+    />
+  </template>
+  <a class="nav-link" href="https://www.asklink.com/zh-CN/download/result?platform=windows" target="_blank" rel="noopener noreferrer">远程</a>
+  <a class="nav-link" href="/sys">系统</a>
+  <button class="nav-link" type="button" @click="openAboutModal">关于</button>
+</SiteNavigation>
 
 <div class="card-container">
   <div
@@ -533,6 +469,7 @@ body {
 
 <script setup>
 import { ref, onMounted, nextTick } from 'vue'
+import SiteNavigation from './components/SiteNavigation.vue'
 // 构建期直接读 JSON：SSR 出来的 HTML 里就带 24 张卡片，
 // 不用等 JS 执行完再 fetch，首屏没有"空壳 -> 一堆卡片凭空插入"的 CLS。
 import toolData from './public/json/tool.json'
